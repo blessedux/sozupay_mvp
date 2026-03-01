@@ -28,17 +28,31 @@ function unsign(payload: string): string | null {
   }
 }
 
+const MOCK_USER: SessionUser = {
+  id: "demo-user-mock",
+  email: "demo@sozupay.demo",
+  twoFactorEnabled: false,
+};
+
 export async function getSession(): Promise<SessionUser | null> {
   const cookieStore = await cookies();
   const raw = cookieStore.get(SESSION_COOKIE)?.value;
-  if (!raw) return null;
-  const json = unsign(raw);
-  if (!json) return null;
-  try {
-    return JSON.parse(json) as SessionUser;
-  } catch {
-    return null;
+  if (raw) {
+    const json = unsign(raw);
+    if (json) {
+      try {
+        return JSON.parse(json) as SessionUser;
+      } catch {
+        // fall through to mock if cookie invalid
+      }
+    }
   }
+  // Mock auth: return a demo user so dashboard and API routes work without login
+  const authMock =
+    process.env.AUTH_MOCK === "true" ||
+    (process.env.AUTH_MOCK !== "false" && process.env.NODE_ENV === "development");
+  if (authMock) return MOCK_USER;
+  return null;
 }
 
 export async function setSession(user: SessionUser): Promise<void> {

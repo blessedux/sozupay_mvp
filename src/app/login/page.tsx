@@ -20,8 +20,8 @@ export default function LoginPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          email,
-          instant: process.env.NODE_ENV === "development",
+          email: email || "demo@sozupay.demo",
+          instant: true, // Mock auth: one click -> dashboard; real auth later
         }),
       });
       const data = await res.json().catch(() => ({}));
@@ -57,8 +57,7 @@ export default function LoginPage() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@example.com"
-              required
+              placeholder="you@example.com (optional for demo)"
               className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-gray-900 dark:text-gray-100"
             />
           </div>

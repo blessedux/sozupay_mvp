@@ -7,10 +7,14 @@ import { setSession } from "@/lib/auth/session";
  */
 export async function POST(request: NextRequest) {
   const body = await request.json().catch(() => ({}));
-  const email = typeof body.email === "string" ? body.email.trim() : "";
+  let email = typeof body.email === "string" ? body.email.trim() : "";
   const instant = body.instant === true;
+  const mockAuth =
+    process.env.AUTH_MOCK === "true" ||
+    (process.env.AUTH_MOCK !== "false" && process.env.NODE_ENV === "development");
 
-  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+  if (!email) email = "demo@sozupay.demo";
+  if (!mockAuth && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return NextResponse.json(
       { error: "Valid email required" },
       { status: 400 }
@@ -20,7 +24,7 @@ export async function POST(request: NextRequest) {
   const token = crypto.randomUUID();
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
 
-  if (instant) {
+  if (instant || mockAuth) {
     await setSession({
       id: `user-${email.replace(/[^a-z0-9]/gi, "-")}`,
       email,
