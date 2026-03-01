@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getAppBaseUrl } from "@/lib/app-url";
 import { setSession } from "@/lib/auth/session";
 
 /**
@@ -10,7 +11,7 @@ export async function GET(request: NextRequest) {
   const token = searchParams.get("token");
   const email = searchParams.get("email");
 
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+  const baseUrl = getAppBaseUrl(request);
 
   if (token && email) {
     await setSession({

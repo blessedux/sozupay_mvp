@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getAppBaseUrl } from "@/lib/app-url";
 import { setSession } from "@/lib/auth/session";
 
 /**
@@ -22,7 +23,7 @@ export async function POST(request: NextRequest) {
   }
 
   const token = crypto.randomUUID();
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+  const baseUrl = getAppBaseUrl(request);
 
   if (instant || mockAuth) {
     await setSession({

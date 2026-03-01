@@ -1,8 +1,9 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { getAppBaseUrl } from "@/lib/app-url";
 import { clearSession } from "@/lib/auth/session";
 
-export async function POST() {
+export async function POST(request: NextRequest) {
   await clearSession();
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+  const baseUrl = getAppBaseUrl(request);
   return NextResponse.redirect(`${baseUrl}/login`);
 }
