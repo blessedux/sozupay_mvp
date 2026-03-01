@@ -38,7 +38,7 @@ export default async function PayWallPage({
           Pay with bank or card (on-ramp). Funds convert to USDC and credit the merchant.
         </p>
         <p className="mt-4 text-xs text-gray-400 dark:text-gray-500">
-          On-ramp adapter integration point — connect your provider in dashboard.
+          On-ramp adapter integration point — connect your provider in dashboard.           
         </p>
       </div>
     </main>
