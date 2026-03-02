@@ -22,5 +22,5 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(`${baseUrl}/auth/success`);
   }
 
-  return NextResponse.redirect(`${baseUrl}/login?error=invalid_link`);
+  return NextResponse.redirect(`${baseUrl}/?error=invalid_link`);
 }

@@ -8,9 +8,8 @@ import { usePrivy, useLogin } from "@privy-io/react-auth";
 const usePrivyAuth = !!process.env.NEXT_PUBLIC_PRIVY_APP_ID;
 
 /**
- * On home: if Privy is configured, clicking "Sign in" opens the Privy modal
- * instead of navigating to /login. After login we send user to /login to sync
- * session, then they get redirected to dashboard.
+ * If Privy is configured, opens the Privy modal. After login the home page
+ * syncs session and redirects to onboarding/dashboard. Fallback link goes to home.
  */
 export function HomeSignInButton() {
   const router = useRouter();
@@ -19,14 +18,14 @@ export function HomeSignInButton() {
 
   useEffect(() => {
     if (usePrivyAuth && authenticated) {
-      router.replace("/login");
+      router.replace("/");
     }
   }, [authenticated, router]);
 
   if (!usePrivyAuth) {
     return (
       <Link
-        href="/login"
+        href="/"
         className="mt-6 rounded-md bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 px-4 py-2 font-medium"
       >
         Sign in

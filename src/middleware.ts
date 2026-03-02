@@ -12,7 +12,7 @@ const AUTH_MOCK =
 
 export function middleware(request: NextRequest) {
   const session = request.cookies.get("sozupay_session")?.value;
-  const isLogin = request.nextUrl.pathname.startsWith("/login");
+  const isHome = request.nextUrl.pathname === "/";
   const isAuthApi =
     request.nextUrl.pathname.startsWith("/api/auth/verify") ||
     request.nextUrl.pathname.startsWith("/api/auth/send-link") ||
@@ -20,25 +20,24 @@ export function middleware(request: NextRequest) {
 
   if (isAuthApi) return NextResponse.next();
 
-  // Mock auth (no Privy): allow all routes; redirect to dashboard if logged in and on /login
+  // Mock auth (no Privy): allow all routes; redirect to dashboard if logged in and on home
   if (AUTH_MOCK) {
-    if (isLogin && session) {
+    if (isHome && session) {
       return NextResponse.redirect(new URL("/dashboard", request.url));
     }
     return NextResponse.next();
   }
 
-  // Privy auth: protect dashboard and onboarding; do NOT redirect away from /login when session exists
-  // so that user always sees login and can choose email (we clear session + Privy on login page)
+  // Privy auth: protect dashboard and onboarding; redirect unauthenticated to home (login)
   const isDashboard = request.nextUrl.pathname.startsWith("/dashboard");
   const isOnboarding = request.nextUrl.pathname.startsWith("/onboarding");
   const isAuthSuccess = request.nextUrl.pathname === "/auth/success";
   if ((isDashboard || isOnboarding || isAuthSuccess) && !session) {
-    return NextResponse.redirect(new URL("/login", request.url));
+    return NextResponse.redirect(new URL("/", request.url));
   }
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/onboarding/:path*", "/auth/success", "/login", "/api/auth/verify", "/api/auth/send-link"],
+  matcher: ["/", "/dashboard/:path*", "/onboarding/:path*", "/auth/success", "/api/auth/verify", "/api/auth/send-link"],
 };

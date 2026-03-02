@@ -38,7 +38,7 @@ export function DashboardProfileProvider({ children }: { children: ReactNode }) 
       .then((r) => {
         if (r.status === 401) {
           setProfile(null);
-          if (typeof window !== "undefined") window.location.href = "/login";
+          if (typeof window !== "undefined") window.location.href = "/";
           return;
         }
         return r.ok ? r.json() : {};

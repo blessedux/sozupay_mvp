@@ -8,7 +8,7 @@ async function performLogout(request: NextRequest) {
   if (session) clearUnlockedKey(session.id);
   await clearSession();
   const baseUrl = getAppBaseUrl(request);
-  return NextResponse.redirect(`${baseUrl}/login`);
+  return NextResponse.redirect(`${baseUrl}/`);
 }
 
 /** POST: form submit from "Log out" button. */

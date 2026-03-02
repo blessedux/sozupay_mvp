@@ -159,7 +159,7 @@ export default function SettingsPage() {
               } finally {
                 const res = await fetch("/api/auth/logout", { method: "POST", redirect: "manual" });
                 const url = res.headers.get("Location");
-                window.location.href = url || "/login";
+                window.location.href = url || "/";
               }
             }}
             className="rounded-md border border-red-300 dark:border-red-700 text-red-700 dark:text-red-400 px-3 py-1.5 text-sm disabled:opacity-50"
