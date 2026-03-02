@@ -64,8 +64,7 @@ export async function POST(request: NextRequest) {
       twoFactorEnabled: false,
     });
 
-    const needsPayoutWalletSetup = !user.stellar_payout_public_key;
-    return NextResponse.json({ ok: true, needsPayoutWalletSetup });
+    return NextResponse.json({ ok: true });
   } catch (err) {
     const message =
       err instanceof Error ? err.message : "Failed to create or load user";

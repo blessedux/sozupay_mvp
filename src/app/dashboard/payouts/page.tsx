@@ -91,8 +91,8 @@ export default function PayoutsPage() {
       .then((d) => setRecipients(d.recipients ?? []));
     fetch("/api/profile")
       .then((r) => (r.ok ? r.json() : {}))
-      .then((p: { payout_wallet_public_key?: string | null; email?: string }) => {
-        setPayoutWalletAddress(p.payout_wallet_public_key ?? null);
+      .then((p: { org_payout_wallet_public_key?: string | null; org_stellar_disbursement_public_key?: string | null; email?: string }) => {
+        setPayoutWalletAddress(p.org_payout_wallet_public_key ?? p.org_stellar_disbursement_public_key ?? null);
         setUserDisplayName(p.email?.split("@")[0] ?? "You");
       });
   }, []);

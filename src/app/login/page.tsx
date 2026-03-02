@@ -58,7 +58,8 @@ export default function LoginPage() {
           setError(data.error ?? "Failed to sign in");
           return;
         }
-        router.replace(data.needsPayoutWalletSetup ? "/onboarding/set-payout-wallet" : "/dashboard");
+        // Always go to dashboard; OnboardingRedirect (using /api/profile) will redirect to create-org or set-payout-wallet if needed
+        router.replace("/dashboard");
       } catch (e) {
         if (cancelled) return;
         if (e instanceof Error) {

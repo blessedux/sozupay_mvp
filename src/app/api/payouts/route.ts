@@ -262,7 +262,9 @@ export async function POST(request: NextRequest) {
         }
       }
       results.push({ payout: record });
-      appendAuditEvent("payout", `Payout: ${n.recipientLabel ?? n.stellarAddress ?? n.bankAccountId}`, session.id);
+      if (n.type !== "to_stellar") {
+        appendAuditEvent("payout", `Payout: ${n.recipientLabel ?? n.stellarAddress ?? n.bankAccountId}`, session.id);
+      }
     }
     return NextResponse.json({ payouts: results.map((r) => r.payout) });
   }

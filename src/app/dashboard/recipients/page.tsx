@@ -90,9 +90,9 @@ export default function RecipientsPage() {
   useEffect(() => {
     fetch("/api/profile")
       .then((r) => (r.ok ? r.json() : {}))
-      .then((p: { admin_level?: string; payout_wallet_public_key?: string | null; email?: string }) => {
+      .then((p: { admin_level?: string; org_payout_wallet_public_key?: string | null; org_stellar_disbursement_public_key?: string | null; email?: string }) => {
         setAdminLevel(p.admin_level ?? "");
-        setPayoutWalletAddress(p.payout_wallet_public_key ?? null);
+        setPayoutWalletAddress(p.org_payout_wallet_public_key ?? p.org_stellar_disbursement_public_key ?? null);
         setUserDisplayName(p.email?.split("@")[0] ?? "You");
       });
   }, []);
@@ -591,7 +591,7 @@ export default function RecipientsPage() {
                       type="button"
                       onClick={() => setExpandedId(isExpanded ? null : r.id)}
                       className="flex items-center gap-2 text-left flex-1 min-w-0 rounded focus:ring-2 focus:ring-offset-1 focus:ring-gray-400"
-                      aria-expanded={isExpanded ? "true" : "false"}
+                      aria-expanded={isExpanded}
                       aria-label={isExpanded ? "Collapse details" : "Expand details"}
                     >
                       <span
