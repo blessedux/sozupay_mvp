@@ -10,7 +10,7 @@ type OrgType = "store" | "ngo";
 export default function CreateOrganizationPage() {
   const router = useRouter();
   const [step, setStep] = useState<Step>("choose");
-  const [type, setType] = useState<OrgType | null>(null);
+  const [, setType] = useState<OrgType | null>(null);
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState("");
   const [backupConfirmed, setBackupConfirmed] = useState(false);

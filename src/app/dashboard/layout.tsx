@@ -3,6 +3,8 @@ import { OnboardingRedirect } from "@/components/OnboardingRedirect";
 import { DashboardProfileProvider } from "@/contexts/DashboardProfileContext";
 import { DarkGradientBg } from "@/components/ui/elegant-dark-pattern";
 
+export const dynamic = "force-dynamic";
+
 export default function DashboardLayout({
   children,
 }: {

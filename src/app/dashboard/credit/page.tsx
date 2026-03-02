@@ -94,7 +94,6 @@ export default function CreditPage() {
     const a = available / totalVolume;
     const b = (allocated - inRepayment - overdue) / totalVolume;
     const c = inRepayment / totalVolume;
-    const d = overdue / totalVolume;
     return [
       { id: "available", start: 0, end: a, color: "#22c55e", label: "Available in pool", value: formatUsd(available) },
       { id: "allocated", start: a, end: a + b, color: "#3b82f6", label: "Allocated (pending)", value: formatUsd(allocated - inRepayment - overdue) },

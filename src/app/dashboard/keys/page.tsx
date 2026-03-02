@@ -12,7 +12,8 @@ export default function KeysPage() {
   const { user, ready } = usePrivy();
   const { linkPasskey } = useLinkAccount({
     onSuccess: () => setPasskeyError(null),
-    onError: (err) => setPasskeyError(err?.message ?? "Failed to create passkey"),
+    onError: (err: unknown) =>
+      setPasskeyError(err instanceof Error ? err.message : String(err ?? "Failed to create passkey")),
   });
 
   const usePrivyAuth = !!process.env.NEXT_PUBLIC_PRIVY_APP_ID;

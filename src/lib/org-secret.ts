@@ -8,7 +8,6 @@ import { createHash, createCipheriv, createDecipheriv, randomBytes } from "crypt
 const ALGO = "aes-256-gcm";
 const IV_LEN = 12;
 const AUTH_TAG_LEN = 16;
-const KEY_LEN = 32;
 
 function getKeyForOrg(orgId: string): Buffer {
   const secret = process.env.AUTH_SECRET ?? "dev-secret-change-in-production";

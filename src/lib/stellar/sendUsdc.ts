@@ -149,7 +149,6 @@ export async function sendUsdc(
     result = await horizon.submitTransaction(transaction);
   } catch (err: unknown) {
     const axiosErr = err as { response?: { status?: number; data?: Record<string, unknown> }; message?: string };
-    const status = axiosErr.response?.status;
     const body = axiosErr.response?.data;
     let detail = axiosErr.message ?? String(err);
     if (body != null && typeof body === "object") {
