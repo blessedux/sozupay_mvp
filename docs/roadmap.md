@@ -29,7 +29,7 @@ Each phase builds on:
 
 **Objective:** Launch a working NGO microcredit disbursement + tracking system in Argentina using USDC on Stellar.
 
-- **Months 0–3:** Core infrastructure (Sozu Wallet, USDC on Stellar, Soroban contracts, Defindex/Blend yield)
+- **Months 0–3:** Core infrastructure (Sozu Wallet, USDC on Stellar, Soroban contracts, Defindex/Blend yield). For Blend: testnet contract addresses, supply/withdraw entrypoints, and backend-only vs vault-contract approach are in [testnet-contracts.md](./testnet-contracts.md#blend-integration).
 - **Months 2–6:** NGO Admin Dashboard (SozuPay Phase 1 — bulk beneficiaries, disbursement schedules, repayment tracking, transparency)
 - **Months 4–8:** Behavioral Credit Layer (Trust Score, borrowing caps, pilot micro-loans via Blend)
 - **Months 6–12:** Onboarding (first Argentine NGO, 500–2k recipients, MoneyGram offramp live)

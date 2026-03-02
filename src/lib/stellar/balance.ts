@@ -6,7 +6,7 @@ const USDC_ISSUER_TESTNET =
 const USDC_ISSUER_PUBLIC =
   "GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4EZN";
 
-function getUsdcIssuer(): string {
+export function getUsdcIssuer(): string {
   return process.env.STELLAR_NETWORK === "public"
     ? USDC_ISSUER_PUBLIC
     : USDC_ISSUER_TESTNET;

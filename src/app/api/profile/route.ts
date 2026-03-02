@@ -52,9 +52,12 @@ export async function GET() {
     }
   }
 
+  const network = process.env.STELLAR_NETWORK === "public" ? "mainnet" : "testnet";
+
   return NextResponse.json({
     email: user.email,
     stellar_public_key: user.stellar_public_key,
+    stellar_smart_account_address: user.stellar_smart_account_address ?? null,
     stellar_payout_public_key: user.stellar_payout_public_key ?? null,
     org_payout_wallet_public_key: org_payout_wallet_public_key ?? null,
     org_id: user.org_id ?? null,
@@ -66,5 +69,6 @@ export async function GET() {
     needsPayoutWalletSetup,
     needsOrgCreation,
     needsOrganization,
+    network,
   });
 }

@@ -3,8 +3,9 @@ import { getUserByPrivyId } from "@/lib/db/users";
 import { getOrganizationForUser } from "@/lib/db/organizations";
 
 /**
- * Resolve Stellar public key for the current user (their smart wallet). Backend only.
- * Self-custodial: we only store the public key (user registers it); no secret keys.
+ * Resolve Stellar address for the current user (their wallet). Backend only.
+ * Prefers smart account (C...) when set; otherwise classic public key (G...).
+ * Self-custodial: we only store addresses (user registers G); no secret keys.
  * Returns null if user has not registered a wallet yet.
  */
 export async function getWalletPublicKey(): Promise<string | null> {
@@ -12,9 +13,9 @@ export async function getWalletPublicKey(): Promise<string | null> {
   if (!session) return null;
 
   const user = await getUserByPrivyId(session.id);
-  if (!user?.stellar_public_key) return null;
+  if (!user) return null;
 
-  return user.stellar_public_key;
+  return user.stellar_smart_account_address ?? user.stellar_public_key ?? null;
 }
 
 /**

@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Keypair } from "@stellar/stellar-sdk";
 import { getSession } from "@/lib/auth/session";
-import { getUserByPrivyId, updateUserStellarPublicKey } from "@/lib/db/users";
+import { getUserByPrivyId, updateUserStellarPublicKey, updateUserSmartAccountAddress } from "@/lib/db/users";
+import { createSmartAccountForSigner } from "@/lib/stellar/smart-account";
 
 const REGISTRATION_MESSAGE_PREFIX = "SozuPay wallet registration";
 
@@ -85,8 +86,20 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  let smartAccountAddress: string | null = null;
+  try {
+    const cAddress = await createSmartAccountForSigner(publicKey);
+    if (cAddress) {
+      const withC = await updateUserSmartAccountAddress(session.id, cAddress);
+      smartAccountAddress = withC?.stellar_smart_account_address ?? cAddress;
+    }
+  } catch {
+    // Non-fatal: user still has G registered
+  }
+
   return NextResponse.json({
     ok: true,
     stellar_public_key: updated.stellar_public_key,
+    stellar_smart_account_address: smartAccountAddress ?? undefined,
   });
 }

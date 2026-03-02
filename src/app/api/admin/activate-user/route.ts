@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
 import { getUserByPrivyId, setUserAllowed } from "@/lib/db/users";
-import { fundClassicAccount, isClassicAccount } from "@/lib/stellar/fund";
+import { fundClassicAccount, fundSmartAccount, isClassicAccount, isSmartAccount } from "@/lib/stellar/fund";
 
 function isAdmin(level: string) {
   return level === "admin" || level === "super_admin";
@@ -43,9 +43,19 @@ export async function POST(request: NextRequest) {
   }
 
   let fundTxHash: string | null = null;
-  if (updated.stellar_public_key && isClassicAccount(updated.stellar_public_key)) {
+  const toFund =
+    updated.stellar_smart_account_address && isSmartAccount(updated.stellar_smart_account_address)
+      ? updated.stellar_smart_account_address
+      : updated.stellar_public_key;
+
+  if (toFund) {
     try {
-      fundTxHash = await fundClassicAccount(updated.stellar_public_key);
+      if (isSmartAccount(toFund)) {
+        fundTxHash = await fundSmartAccount(toFund);
+        // Optional: invoke contract-specific USDC setup here if SMART_ACCOUNT_USDC_SETUP_CONTRACT_ID is set (see docs/smart-accounts.md).
+      } else if (isClassicAccount(toFund)) {
+        fundTxHash = await fundClassicAccount(toFund);
+      }
     } catch (e) {
       console.error("[admin/activate-user] fund failed:", e);
       return NextResponse.json(

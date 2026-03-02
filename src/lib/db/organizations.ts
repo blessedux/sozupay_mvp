@@ -37,6 +37,29 @@ export async function getOrganizationForUser(
   return getOrganizationById(orgId);
 }
 
+/** Default org name (first/only org). Configurable via DEFAULT_ORG_NAME env; fallback Mujeres2000. */
+const DEFAULT_ORG_NAME =
+  process.env.DEFAULT_ORG_NAME?.trim() || "Mujeres2000";
+
+/**
+ * Get the default organization that every user can see and select (e.g. Mujeres2000).
+ * Used so new accounts see at least one org; only super_admin can perform payouts.
+ */
+export async function getDefaultOrganization(): Promise<Organization | null> {
+  const { data, error } = await getSupabase()
+    .from("organizations")
+    .select("*")
+    .eq("name", DEFAULT_ORG_NAME)
+    .limit(1)
+    .maybeSingle();
+
+  if (error) {
+    console.error("[organizations] getDefaultOrganization error:", error.message);
+    return null;
+  }
+  return (data as Organization) ?? null;
+}
+
 export async function createOrganization(params: {
   name: string;
   type: OrgType;

@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
 import { getUserByPrivyId } from "@/lib/db/users";
-import { getOrganizationById } from "@/lib/db/organizations";
+import { getOrganizationById, getDefaultOrganization } from "@/lib/db/organizations";
 
 /**
  * GET /api/profile/organizations – list organizations the current user can access.
- * For now: single org (user.org_id). Later: expand with organization_members for multi-org.
+ * Every user sees the default org (e.g. Mujeres2000) so they can open the dashboard; only super_admin can perform payouts.
  */
 export async function GET() {
   const session = await getSession();
@@ -15,19 +15,23 @@ export async function GET() {
 
   try {
     const user = await getUserByPrivyId(session.id);
-    if (!user) {
-      return NextResponse.json({ organizations: [], canCreate: false });
-    }
+    const canCreate = user?.admin_level === "super_admin";
 
+    const seenIds = new Set<string>();
     const organizations: { id: string; name: string }[] = [];
-    if (user.org_id) {
+
+    if (user?.org_id) {
       const org = await getOrganizationById(user.org_id);
       if (org) {
         organizations.push({ id: org.id, name: org.name });
+        seenIds.add(org.id);
       }
     }
 
-    const canCreate = user.admin_level === "super_admin";
+    const defaultOrg = await getDefaultOrganization();
+    if (defaultOrg && !seenIds.has(defaultOrg.id)) {
+      organizations.push({ id: defaultOrg.id, name: defaultOrg.name });
+    }
 
     return NextResponse.json({
       organizations,

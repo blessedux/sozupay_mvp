@@ -5,6 +5,8 @@ export type User = {
   privy_user_id: string;
   email: string;
   stellar_public_key: string | null;
+  /** Smart account (C...) address when using Soroban smart accounts; primary wallet for display/funding when set. */
+  stellar_smart_account_address: string | null;
   /** Public key of keypair derived from user's payout passphrase (set at onboarding). */
   stellar_payout_public_key: string | null;
   allowed: boolean;
@@ -77,6 +79,24 @@ export async function updateUserStellarPublicKey(
   const { data, error } = await getSupabase()
     .from("users")
     .update({ stellar_public_key: stellarPublicKey, updated_at: new Date().toISOString() })
+    .eq("privy_user_id", privyUserId)
+    .select()
+    .single();
+
+  if (error) return null;
+  return data as User;
+}
+
+export async function updateUserSmartAccountAddress(
+  privyUserId: string,
+  smartAccountAddress: string
+): Promise<User | null> {
+  const { data, error } = await getSupabase()
+    .from("users")
+    .update({
+      stellar_smart_account_address: smartAccountAddress,
+      updated_at: new Date().toISOString(),
+    })
     .eq("privy_user_id", privyUserId)
     .select()
     .single();

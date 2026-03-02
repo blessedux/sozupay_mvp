@@ -12,16 +12,65 @@ Contract at `contracts/disbursement_wallet/`: holds a token (e.g. USDC) and allo
 
 ## Build and deploy (testnet)
 
+### Prerequisites
+
+- [Soroban CLI](https://soroban.stellar.org/docs/getting-started/setup) installed.
+- A keypair with testnet XLM (e.g. create with Stellar Laboratory and fund via [Friendbot](https://laboratory.stellar.org/#explorer?resource=friendbot&endpoint=create)). Set as `--source` or in your default identity.
+- **USDC token contract address (testnet):** The disbursement wallet needs the Soroban contract ID for USDC. On testnet this is the Stellar Asset Contract (SAC) for USDC (issuer `GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5`). Resolve it via Stellar docs or deploy/wrap the asset; then record it in [docs/testnet-contracts.md](./testnet-contracts.md).
+
+### 1. Build the WASM
+
 ```bash
 # From repo root
 cd contracts/disbursement_wallet
 cargo build --target wasm32-unknown-unknown --release
-# Optimized WASM is in target/wasm32-unknown-unknown/release/disbursement_wallet.wasm
-
-# Deploy with Soroban CLI (install: https://soroban.stellar.org/docs/getting-started/setup)
-# soroban contract deploy --wasm target/wasm32-unknown-unknown/release/disbursement_wallet.wasm --source <admin-key> --network testnet
-# Then initialize( token_address, [admin_address] ) so the deployer is the first signer.
 ```
+
+Output: `target/wasm32-unknown-unknown/release/disbursement_wallet.wasm`
+
+### 2. Deploy the contract
+
+```bash
+# Replace <ADMIN_KEY_NAME> with your Soroban identity (e.g. default or a named key)
+soroban contract deploy \
+  --wasm target/wasm32-unknown-unknown/release/disbursement_wallet.wasm \
+  --source <ADMIN_KEY_NAME> \
+  --network testnet
+```
+
+Copy the returned **contract ID** (starts with `C...`). Record it in [docs/testnet-contracts.md](./testnet-contracts.md) and (for the org) in the database as `soroban_contract_id`.
+
+### 3. Initialize the contract
+
+You must call `initialize(token_address, signers)` once. The deployer (admin) should be the first signer.
+
+```bash
+# Set variables (replace with your values)
+CONTRACT_ID=<CONTRACT_ID_FROM_STEP_2>
+USDC_TOKEN_ADDRESS=<SOROBAN_USDC_TOKEN_CONTRACT_ID>
+ADMIN_ADDRESS=<YOUR_G_PUBLIC_KEY_OR_ADDRESS>
+
+# Invoke initialize(token, signers)
+# Signers is a vec of one address: the admin. Use Soroban CLI's format for Address and Vec.
+soroban contract invoke \
+  --id $CONTRACT_ID \
+  --source <ADMIN_KEY_NAME> \
+  --network testnet \
+  -- \
+  initialize \
+  --token "$USDC_TOKEN_ADDRESS" \
+  --signers "[$ADMIN_ADDRESS]"
+```
+
+(Exact CLI syntax for `--signers` may vary by Soroban CLI version; use `soroban contract invoke --help` and the contract’s ABI. Alternative: use a small script or the Stellar Laboratory to encode and submit the `initialize` invocation.)
+
+### 4. Fund the contract with USDC
+
+Transfer test USDC from your admin account to the **contract ID** (the contract holds the token balance). Use Stellar Laboratory (classic transfer to the contract’s address if it accepts, or use a Soroban token transfer). The contract must hold a positive USDC balance before `payout` can succeed.
+
+### 5. Set the contract on the organization
+
+In your database, set the organization’s `soroban_contract_id` to the contract ID from step 2. The dashboard payouts flow will then use this contract when the org is selected and the super-admin (or authorized signer) unlocks their key.
 
 ## Address format
 

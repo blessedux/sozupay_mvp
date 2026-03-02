@@ -7,6 +7,7 @@ import { usePrivy } from "@privy-io/react-auth";
 type ProfileData = {
   email: string;
   stellar_public_key: string | null;
+  stellar_smart_account_address?: string | null;
   stellar_payout_public_key: string | null;
   org_payout_wallet_public_key: string | null;
   org_id: string | null;
@@ -16,6 +17,7 @@ type ProfileData = {
   admin_level: string;
   activation_requested_at: string | null;
   needsPayoutWalletSetup?: boolean;
+  network?: string;
 };
 
 const STELLAR_EXPERT_BASE =
@@ -44,6 +46,14 @@ export default function ProfilePage() {
   const [justCreatedOrgKeys, setJustCreatedOrgKeys] = useState<{ publicKey: string; secretKey: string } | null>(null);
   const [revealedOrgSecret, setRevealedOrgSecret] = useState<string | null>(null);
   const [loadingOrgSecret, setLoadingOrgSecret] = useState(false);
+  const [trustlineStatus, setTrustlineStatus] = useState<{
+    needs_trustline: boolean;
+    has_trustline: boolean;
+  } | null>(null);
+  const [trustlineSigning, setTrustlineSigning] = useState(false);
+  const [trustlineError, setTrustlineError] = useState<string | null>(null);
+  const [trustlineSecretInput, setTrustlineSecretInput] = useState("");
+  const [showTrustlineModal, setShowTrustlineModal] = useState(false);
 
   const loadProfile = useCallback(() => {
     setLoading(true);
@@ -64,6 +74,28 @@ export default function ProfilePage() {
   useEffect(() => {
     loadProfile();
   }, [loadProfile]);
+
+  useEffect(() => {
+    if (!profile?.stellar_public_key || !profile?.allowed) {
+      setTrustlineStatus(null);
+      return;
+    }
+    if (profile.stellar_smart_account_address) {
+      setTrustlineStatus({ needs_trustline: false, has_trustline: true });
+      return;
+    }
+    fetch("/api/profile/wallet/trustline-status")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.needs_trustline != null) {
+          setTrustlineStatus({
+            needs_trustline: data.needs_trustline,
+            has_trustline: data.has_trustline,
+          });
+        }
+      })
+      .catch(() => setTrustlineStatus(null));
+  }, [profile?.stellar_public_key, profile?.allowed, profile?.stellar_smart_account_address]);
 
   const displayName =
     privyUser?.email?.address ??
@@ -183,6 +215,54 @@ export default function ProfilePage() {
     setCreateError(null);
   };
 
+  const handleOpenTrustlineSign = () => {
+    setTrustlineError(null);
+    setTrustlineSecretInput("");
+    setShowTrustlineModal(true);
+  };
+
+  const handleSubmitTrustline = async () => {
+    const secret = trustlineSecretInput.trim();
+    if (!secret) {
+      setTrustlineError("Enter your wallet secret key");
+      return;
+    }
+    setTrustlineSigning(true);
+    setTrustlineError(null);
+    try {
+      const res = await fetch("/api/profile/wallet/trustline-tx");
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.envelope_xdr) {
+        setTrustlineError(data.error ?? "Failed to get transaction");
+        return;
+      }
+      const { Transaction, Keypair: Kp, Networks } = await import("@stellar/stellar-sdk");
+      const networkPassphrase = data.network === "public" ? Networks.PUBLIC : Networks.TESTNET;
+      const tx = new Transaction(data.envelope_xdr, networkPassphrase);
+      const keypair = Kp.fromSecret(secret);
+      tx.sign(keypair);
+      const xdr = tx.toEnvelope().toXDR("base64");
+      const horizonUrl = data.network === "public" ? "https://horizon.stellar.org" : "https://horizon-testnet.stellar.org";
+      const submitRes = await fetch(`${horizonUrl}/transactions`, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: `tx=${encodeURIComponent(xdr)}`,
+      });
+      const submitData = await submitRes.json().catch(() => ({}));
+      if (!submitRes.ok || submitData.status === "failed") {
+        setTrustlineError(submitData.detail ?? submitData.extras?.result_codes?.transaction ?? "Transaction failed");
+        return;
+      }
+      setShowTrustlineModal(false);
+      setTrustlineSecretInput("");
+      setTrustlineStatus({ needs_trustline: false, has_trustline: true });
+    } catch (e) {
+      setTrustlineError(e instanceof Error ? e.message : "Failed to add trustline");
+    } finally {
+      setTrustlineSigning(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="text-gray-500 dark:text-gray-400">Loading profile…</div>
@@ -203,8 +283,9 @@ export default function ProfilePage() {
     );
   }
 
-  const stellarExplorerUrl = profile.stellar_public_key
-    ? `${STELLAR_EXPERT_BASE}/account/${profile.stellar_public_key}`
+  const walletAddress = profile.stellar_smart_account_address ?? profile.stellar_public_key;
+  const stellarExplorerUrl = walletAddress
+    ? `${STELLAR_EXPERT_BASE}/account/${walletAddress}`
     : null;
 
   return (
@@ -455,20 +536,30 @@ export default function ProfilePage() {
           Your Stellar account for receiving and sending. You control the keys; we only store your public address.
         </p>
 
-        {profile.stellar_public_key ? (
+        {(profile.stellar_smart_account_address || profile.stellar_public_key) ? (
           <div className="mt-4 space-y-3">
             <div className="flex flex-wrap items-center gap-2">
               <code className="flex-1 min-w-0 font-mono text-sm text-gray-700 dark:text-gray-300 break-all bg-gray-100 dark:bg-gray-700/50 px-2 py-1.5 rounded">
-                {profile.stellar_public_key}
+                {profile.stellar_smart_account_address ?? profile.stellar_public_key}
               </code>
               <button
                 type="button"
-                onClick={() => handleCopy(profile.stellar_public_key!, "address")}
+                onClick={() => handleCopy(profile.stellar_smart_account_address ?? profile.stellar_public_key!, "address")}
                 className="rounded-md border border-gray-300 dark:border-gray-600 px-2 py-1.5 text-xs font-medium shrink-0"
               >
                 {copied === "address" ? "Copied" : "Copy"}
               </button>
             </div>
+            {profile.stellar_smart_account_address && (
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                Smart account (C). Signer: {profile.stellar_public_key ?? "—"}
+              </p>
+            )}
+            {profile.network && (
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                Network: <span className="font-medium capitalize">{profile.network}</span>
+              </p>
+            )}
             {stellarExplorerUrl && (
               <a
                 href={stellarExplorerUrl}
@@ -478,6 +569,37 @@ export default function ProfilePage() {
               >
                 View on Stellar Expert →
               </a>
+            )}
+            {profile.allowed && trustlineStatus?.needs_trustline && (
+              <div className="mt-4 p-4 rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/20">
+                <p className="text-sm font-medium text-amber-800 dark:text-amber-200">
+                  Complete setup: Add USDC trustline
+                </p>
+                <p className="mt-1 text-xs text-amber-700 dark:text-amber-300">
+                  Your account is funded. Add a USDC trustline once to receive USDC payments. Sign with your wallet secret (never stored).
+                </p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    onClick={handleOpenTrustlineSign}
+                    disabled={trustlineSigning}
+                    className="rounded-md bg-amber-600 dark:bg-amber-700 text-white px-3 py-2 text-sm font-medium hover:bg-amber-700 dark:hover:bg-amber-600 disabled:opacity-50"
+                  >
+                    {trustlineSigning ? "Signing…" : "Add USDC trustline"}
+                  </button>
+                  <a
+                    href="https://laboratory.stellar.org/#explorer?resource=accounts&endpoint=single"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="rounded-md border border-amber-600 dark:border-amber-500 px-3 py-2 text-sm font-medium text-amber-700 dark:text-amber-300 hover:bg-amber-100 dark:hover:bg-amber-900/30"
+                  >
+                    Or add via Stellar Laboratory →
+                  </a>
+                </div>
+              </div>
+            )}
+            {profile.allowed && trustlineStatus?.has_trustline && !trustlineStatus?.needs_trustline && (
+              <p className="text-xs text-green-600 dark:text-green-400">USDC trustline added. Ready to receive USDC.</p>
             )}
             <p className="text-xs text-gray-500 dark:text-gray-400">
               To connect a different wallet, go to Settings → Recovery & wallet.
@@ -624,6 +746,46 @@ export default function ProfilePage() {
         <p className="mt-6 text-sm text-gray-500 dark:text-gray-400">
           Your profile is activated. You can use your Stellar wallet for payments.
         </p>
+      )}
+
+      {showTrustlineModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" role="dialog" aria-modal="true" aria-labelledby="trustline-modal-title">
+          <div className="w-full max-w-md rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-xl">
+            <h3 id="trustline-modal-title" className="text-lg font-semibold">Add USDC trustline</h3>
+            <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+              Paste your wallet secret key to sign the transaction. It is never sent to our servers and is only used in your browser to sign.
+            </p>
+            <input
+              type="password"
+              value={trustlineSecretInput}
+              onChange={(e) => setTrustlineSecretInput(e.target.value)}
+              placeholder="Secret key (S...)"
+              className="mt-3 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 font-mono text-sm"
+              autoComplete="off"
+            />
+            {trustlineError && (
+              <p className="mt-2 text-sm text-red-600 dark:text-red-400">{trustlineError}</p>
+            )}
+            <div className="mt-4 flex gap-2">
+              <button
+                type="button"
+                onClick={handleSubmitTrustline}
+                disabled={trustlineSigning || !trustlineSecretInput.trim()}
+                className="rounded-md bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 px-3 py-2 text-sm font-medium disabled:opacity-50"
+              >
+                {trustlineSigning ? "Signing…" : "Sign & submit"}
+              </button>
+              <button
+                type="button"
+                onClick={() => { setShowTrustlineModal(false); setTrustlineError(null); setTrustlineSecretInput(""); }}
+                disabled={trustlineSigning}
+                className="rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm font-medium"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

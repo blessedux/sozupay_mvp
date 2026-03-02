@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS users (
   privy_user_id TEXT NOT NULL UNIQUE,
   email TEXT NOT NULL,
   stellar_public_key TEXT,
+  stellar_smart_account_address TEXT,
   stellar_payout_public_key TEXT,
   allowed BOOLEAN NOT NULL DEFAULT false,
   admin_level TEXT NOT NULL DEFAULT 'user' CHECK (admin_level IN ('user', 'admin', 'super_admin')),
@@ -17,6 +18,9 @@ CREATE TABLE IF NOT EXISTS users (
 
 -- Add column if table already exists (run once):
 -- ALTER TABLE users ADD COLUMN IF NOT EXISTS activation_requested_at TIMESTAMPTZ;
+
+-- Smart account (C...) created from user's G signer; used for display and funding when set.
+-- ALTER TABLE users ADD COLUMN IF NOT EXISTS stellar_smart_account_address TEXT;
 
 -- Payout wallet: public key of the keypair derived from the user's passphrase (set at onboarding).
 -- Used to verify "unlock" passphrase and to show the address to fund for super_admin payouts.

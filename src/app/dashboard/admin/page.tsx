@@ -7,6 +7,7 @@ type PendingUser = {
   privy_user_id: string;
   email: string;
   stellar_public_key: string | null;
+  stellar_smart_account_address?: string | null;
   allowed: boolean;
   activation_requested_at: string | null;
 };
@@ -75,7 +76,10 @@ export default function AdminPage() {
     <div>
       <h1 className="text-2xl font-bold">Admin</h1>
       <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-        Activate user profiles and fund their wallet. Classic accounts (G...) are funded with XLM via createAccount when you click Activate (requires STELLAR_FUNDER_SECRET). Smart accounts (C...) will use a separate Soroban flow — see docs/smart-accounts.md.
+        Activate user profiles and fund their wallet. Classic accounts (G...) are funded with XLM via createAccount; smart accounts (C...) are funded via XLM Payment. Requires STELLAR_FUNDER_SECRET.
+      </p>
+      <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+        Network: <span className="font-medium capitalize">{process.env.NEXT_PUBLIC_STELLAR_NETWORK === "public" ? "mainnet" : "testnet"}</span>
       </p>
       {lastResult && (
         <div className="mt-3 p-3 rounded-lg bg-gray-100 dark:bg-gray-800 text-sm">
@@ -113,16 +117,19 @@ export default function AdminPage() {
                   <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
                     Requested: {u.activation_requested_at ? new Date(u.activation_requested_at).toLocaleString() : "—"}
                   </p>
-                  {u.stellar_public_key && (
+                  {(u.stellar_smart_account_address || u.stellar_public_key) && (
                     <p className="text-xs font-mono text-gray-600 dark:text-gray-300 mt-1 break-all">
-                      {u.stellar_public_key}
+                      {u.stellar_smart_account_address ?? u.stellar_public_key}
+                      {u.stellar_smart_account_address && (
+                        <span className="text-gray-400 dark:text-gray-500 ml-1">(C)</span>
+                      )}
                     </p>
                   )}
                 </div>
                 <div className="flex items-center gap-2">
-                  {u.stellar_public_key && (
+                  {(u.stellar_smart_account_address || u.stellar_public_key) && (
                     <a
-                      href={`${STELLAR_EXPERT_BASE}/account/${u.stellar_public_key}`}
+                      href={`${STELLAR_EXPERT_BASE}/account/${u.stellar_smart_account_address ?? u.stellar_public_key}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="rounded-md border border-gray-300 dark:border-gray-600 px-3 py-1.5 text-sm hover:bg-gray-50 dark:hover:bg-gray-800"
@@ -146,7 +153,7 @@ export default function AdminPage() {
       </section>
 
       <p className="mt-6 text-xs text-gray-500 dark:text-gray-400">
-        Activate sets the user as allowed. To fully activate their smart wallet, call your contract and deposit the required XLM (e.g. from your treasury) — plug in that logic in the API route.
+        Activate sets the user as allowed and funds their wallet (XLM). G accounts get createAccount; C accounts get a Payment. For G accounts, they can then add a USDC trustline from Profile.
       </p>
     </div>
   );
