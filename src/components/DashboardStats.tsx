@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 
 interface Stats {
   balanceUsd: string;
@@ -15,34 +16,44 @@ function StatCard({
   value,
   sub,
   icon,
+  href,
 }: {
   label: string;
   value: string;
   sub?: string;
   icon: React.ReactNode;
+  href?: string;
 }) {
-  return (
-    <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/50 p-5 shadow-sm">
-      <div className="flex items-start justify-between">
-        <div>
-          <p className="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
-            {label}
+  const content = (
+    <div className="flex items-start justify-between">
+      <div>
+        <p className="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+          {label}
+        </p>
+        <p className="mt-1 text-2xl font-bold text-gray-900 dark:text-white tabular-nums">
+          {value}
+        </p>
+        {sub != null && (
+          <p className="mt-0.5 text-xs text-gray-500 dark:text-gray-400">
+            {sub}
           </p>
-          <p className="mt-1 text-2xl font-bold text-gray-900 dark:text-white tabular-nums">
-            {value}
-          </p>
-          {sub != null && (
-            <p className="mt-0.5 text-xs text-gray-500 dark:text-gray-400">
-              {sub}
-            </p>
-          )}
-        </div>
-        <div className="rounded-lg bg-gray-100 dark:bg-gray-700/50 p-2 text-gray-600 dark:text-gray-300">
-          {icon}
-        </div>
+        )}
+      </div>
+      <div className="rounded-lg bg-gray-100 dark:bg-gray-700/50 p-2 text-gray-600 dark:text-gray-300">
+        {icon}
       </div>
     </div>
   );
+  const className =
+    "rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/50 p-5 shadow-sm block transition hover:border-gray-300 dark:hover:border-gray-600";
+  if (href) {
+    return (
+      <Link href={href} className={className} aria-label={`${label}: ${value}`}>
+        {content}
+      </Link>
+    );
+  }
+  return <div className={className}>{content}</div>;
 }
 
 export default function DashboardStats() {
@@ -88,6 +99,7 @@ export default function DashboardStats() {
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
       <StatCard
+        href="/dashboard/vault"
         label="Balance"
         value={formatUsd(balanceUsd)}
         sub="Stored in USD (USDC)"
@@ -98,6 +110,7 @@ export default function DashboardStats() {
         }
       />
       <StatCard
+        href="/dashboard/transactions"
         label="Transactions"
         value={String(txCount)}
         sub="Total received & sent"
@@ -108,6 +121,7 @@ export default function DashboardStats() {
         }
       />
       <StatCard
+        href="/dashboard/vault"
         label="APY on balance"
         value={`${apyPercent}%`}
         sub="Yield on vault balance"
@@ -118,6 +132,7 @@ export default function DashboardStats() {
         }
       />
       <StatCard
+        href="/dashboard/settings"
         label="Credit available"
         value={formatUsd(creditUsd)}
         sub="Eligible to request"

@@ -15,8 +15,8 @@ export async function GET(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   const { id } = await params;
-  const recipient = getRecipient(id);
-  if (!recipient || recipient.userId !== session.id) {
+  const recipient = await getRecipient(id, session.id);
+  if (!recipient) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
   return NextResponse.json({ recipient });
@@ -38,9 +38,11 @@ export async function PATCH(
     );
   }
   const { id } = await params;
-  const recipient = updateRecipient(id, session.id, {
+  const recipient = await updateRecipient(id, session.id, {
     name: typeof body.name === "string" ? body.name : undefined,
     bankAccountId: typeof body.bankAccountId === "string" ? body.bankAccountId : undefined,
+    stellarAddress: typeof body.stellarAddress === "string" ? body.stellarAddress : undefined,
+    phone: typeof body.phone === "string" ? body.phone : undefined,
   });
   if (!recipient) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
@@ -57,7 +59,7 @@ export async function DELETE(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   const { id } = await params;
-  const ok = deleteRecipient(id, session.id);
+  const ok = await deleteRecipient(id, session.id);
   if (!ok) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }

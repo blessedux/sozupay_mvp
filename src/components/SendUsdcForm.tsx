@@ -2,30 +2,92 @@
 
 import { useState } from "react";
 
-export default function SendUsdcForm({ onSent }: { onSent?: () => void }) {
+export type StellarPayoutBody = {
+  amount: string;
+  toStellar: true;
+  destination: string;
+  recipientLabel?: string;
+};
+
+export type PayoutSuccess = {
+  amount: string;
+  destination: string;
+  recipientLabel?: string;
+  stellarTxHash?: string;
+};
+
+export default function SendUsdcForm({
+  onSent,
+  onFailed,
+  onRequireUnlock,
+  onSubmitting,
+}: {
+  onSent?: (payout: PayoutSuccess) => void;
+  onFailed?: (error: string) => void;
+  onRequireUnlock?: (body: StellarPayoutBody) => void;
+  /** When provided, form opens confirm flow (parent shows modal and submits on confirm). Receives summary and body so parent can submit later. */
+  onSubmitting?: (summary: { amount: string; destination: string; recipientLabel?: string }, body: StellarPayoutBody) => void;
+}) {
   const [destination, setDestination] = useState("");
   const [amount, setAmount] = useState("");
   const [loading, setLoading] = useState(false);
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    const body: StellarPayoutBody = {
+      amount,
+      toStellar: true,
+      destination: destination.trim(),
+      recipientLabel: undefined,
+    };
+    const summary = { amount, destination: destination.trim(), recipientLabel: body.recipientLabel };
+    if (onSubmitting) {
+      onSubmitting(summary, body);
+      return;
+    }
     setLoading(true);
     fetch("/api/payouts", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        amount,
-        toStellar: true,
-        destination: destination.trim(),
-      }),
+      body: JSON.stringify(body),
     })
-      .then((r) => r.json())
-      .then((d) => {
-        if (d.payout) {
+      .then(async (r) => {
+        const text = await r.text();
+        let d: { payout?: { amount?: string; stellarTxHash?: string; stellarAddress?: string; recipientLabel?: string }; error?: string; requireUnlock?: boolean } = {};
+        try {
+          d = text ? JSON.parse(text) : {};
+        } catch {
+          d = { error: r.ok ? "Invalid response" : `${r.status} ${r.statusText}` };
+        }
+        if (!r.ok && !d.error) {
+          d.error = r.status === 502 ? "Payout failed. Check terminal for details." : `Request failed (${r.status}).`;
+        }
+        return { ok: r.ok, data: d };
+      })
+      .then(({ ok, data: d }) => {
+        if (d.requireUnlock && d.error && onRequireUnlock) {
+          onRequireUnlock(body);
+          return;
+        }
+        if (ok && d.payout) {
+          const p = d.payout;
           setDestination("");
           setAmount("");
-          onSent?.();
+          onSent?.({
+            amount: typeof p.amount === "string" ? p.amount : amount,
+            destination: p.stellarAddress ?? destination.trim(),
+            recipientLabel: p.recipientLabel,
+            stellarTxHash: p.stellarTxHash,
+          });
+        } else if (d.error) {
+          if (onFailed) onFailed(d.error);
+          else alert(d.error);
         }
+      })
+      .catch((err) => {
+        const msg = err instanceof Error ? err.message : "Payout request failed.";
+        if (onFailed) onFailed(msg);
+        else alert(msg);
       })
       .finally(() => setLoading(false));
   }

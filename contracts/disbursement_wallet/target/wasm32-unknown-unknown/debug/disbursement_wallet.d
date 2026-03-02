@@ -1,0 +1,1 @@
+/Users/JoaquinNam/Desktop/SOZUCAPITAL/SozuPay_dashboard/contracts/disbursement_wallet/target/wasm32-unknown-unknown/debug/disbursement_wallet.wasm: /Users/JoaquinNam/Desktop/SOZUCAPITAL/SozuPay_dashboard/contracts/disbursement_wallet/src/lib.rs

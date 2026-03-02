@@ -1,9 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getWalletPublicKey } from "@/lib/wallet-resolve";
+import { getDashboardBalancePublicKey } from "@/lib/wallet-resolve";
 import { getTransactions } from "@/lib/stellar/transactions";
 
+/**
+ * Recent transactions for the dashboard. Uses org disbursement wallet when user has an org with one; else user wallet.
+ */
 export async function GET(request: NextRequest) {
-  const publicKey = await getWalletPublicKey();
+  const publicKey = await getDashboardBalancePublicKey();
   if (!publicKey) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }

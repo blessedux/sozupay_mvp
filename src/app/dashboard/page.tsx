@@ -9,9 +9,6 @@ export default function DashboardPage() {
       <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
         Dashboard
       </h1>
-      <p className="mt-1 text-gray-600 dark:text-gray-400">
-        Your business finance at a glance. Payments are received in fiat and stored in USD.
-      </p>
 
       <section className="mt-6" aria-label="Key metrics">
         <DashboardStats />

@@ -1,14 +1,15 @@
 import { NextResponse } from "next/server";
-import { getWalletPublicKey } from "@/lib/wallet-resolve";
+import { getDashboardBalancePublicKey } from "@/lib/wallet-resolve";
 import { getUsdcBalance } from "@/lib/stellar/balance";
 import { getTransactions } from "@/lib/stellar/transactions";
 
 /**
  * Aggregated business finance stats for the dashboard.
+ * Uses the organization disbursement wallet balance when the user has an org with one; otherwise user wallet.
  * All monetary values are in USD (fiat received is stored as USDC = USD).
  */
 export async function GET() {
-  const publicKey = await getWalletPublicKey();
+  const publicKey = await getDashboardBalancePublicKey();
   if (!publicKey) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }

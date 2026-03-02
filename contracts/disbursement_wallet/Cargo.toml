@@ -1,0 +1,18 @@
+[package]
+name = "disbursement_wallet"
+version = "0.1.0"
+edition = "2021"
+description = "Soroban disbursement wallet: payout(recipient, amount) gated by authorized signers"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+soroban-sdk = "22.0"
+
+[profile.release]
+opt-level = "z"
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = "symbols"

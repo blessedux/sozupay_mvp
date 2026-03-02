@@ -1,21 +1,26 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-/** Mock auth: no redirects to login. All routes allowed. Auth to be implemented later. */
+const PRIVY_APP_ID = process.env.NEXT_PUBLIC_PRIVY_APP_ID;
+const usePrivyAuth = !!PRIVY_APP_ID;
+
+/** When Privy is configured, require session for dashboard. Otherwise use mock in dev. */
 const AUTH_MOCK =
-  process.env.AUTH_MOCK === "true" ||
-  (process.env.AUTH_MOCK !== "false" && process.env.NODE_ENV === "development");
+  !usePrivyAuth &&
+  (process.env.AUTH_MOCK === "true" ||
+    (process.env.AUTH_MOCK !== "false" && process.env.NODE_ENV === "development"));
 
 export function middleware(request: NextRequest) {
   const session = request.cookies.get("sozupay_session")?.value;
   const isLogin = request.nextUrl.pathname.startsWith("/login");
   const isAuthApi =
     request.nextUrl.pathname.startsWith("/api/auth/verify") ||
-    request.nextUrl.pathname.startsWith("/api/auth/send-link");
+    request.nextUrl.pathname.startsWith("/api/auth/send-link") ||
+    request.nextUrl.pathname.startsWith("/api/auth/privy");
 
   if (isAuthApi) return NextResponse.next();
 
-  // Mock auth: never redirect to login; allow /dashboard and all routes through
+  // Mock auth (no Privy): allow all routes; redirect to dashboard if logged in and on /login
   if (AUTH_MOCK) {
     if (isLogin && session) {
       return NextResponse.redirect(new URL("/dashboard", request.url));
@@ -23,10 +28,11 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Real auth (when AUTH_MOCK is off): protect dashboard
+  // Privy auth (or real auth): protect dashboard and onboarding
   const isDashboard = request.nextUrl.pathname.startsWith("/dashboard");
+  const isOnboarding = request.nextUrl.pathname.startsWith("/onboarding");
   const isAuthSuccess = request.nextUrl.pathname === "/auth/success";
-  if ((isDashboard || isAuthSuccess) && !session) {
+  if ((isDashboard || isOnboarding || isAuthSuccess) && !session) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
   if (isLogin && session) {
@@ -36,5 +42,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/auth/success", "/login", "/api/auth/verify", "/api/auth/send-link"],
+  matcher: ["/dashboard/:path*", "/onboarding/:path*", "/auth/success", "/login", "/api/auth/verify", "/api/auth/send-link"],
 };

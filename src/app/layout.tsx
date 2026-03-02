@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { LazyPrivyWrapper } from "@/components/LazyPrivyWrapper";
 
 export const metadata: Metadata = {
   title: "SozuPay Dashboard",
-  description: "Merchant dashboard – one wallet, one source of truth.",
+  description: "Merchant dashboard – EMPRENDE / MUJERES 2000.",
 };
 
 export default function RootLayout({
@@ -13,7 +14,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="antialiased min-h-screen">{children}</body>
+      <body className="antialiased min-h-screen">
+        <LazyPrivyWrapper>{children}</LazyPrivyWrapper>
+      </body>
     </html>
   );
 }

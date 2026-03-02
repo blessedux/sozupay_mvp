@@ -7,7 +7,7 @@ export async function GET() {
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  const recipients = listRecipients(session.id);
+  const recipients = await listRecipients(session.id);
   return NextResponse.json({ recipients });
 }
 
@@ -18,22 +18,22 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json().catch(() => ({}));
-  if (body.twoFactorVerified !== true) {
-    return NextResponse.json(
-      { error: "2FA required to add recipient with bank account", required: true },
-      { status: 403 }
-    );
+  const name = typeof body.name === "string" ? body.name.trim() : "Recipient";
+  const bankAccountId = typeof body.bankAccountId === "string" ? body.bankAccountId.trim() : "";
+  const stellarAddress = typeof body.stellarAddress === "string" ? body.stellarAddress.trim() : undefined;
+  const phone = typeof body.phone === "string" ? body.phone.trim() : undefined;
+
+  if (!name) {
+    return NextResponse.json({ error: "Name is required" }, { status: 400 });
   }
 
-  const name = typeof body.name === "string" ? body.name.trim() : "Recipient";
-  const bankAccountId = typeof body.bankAccountId === "string" ? body.bankAccountId : "";
-  if (!bankAccountId) {
+  if (!bankAccountId && !stellarAddress) {
     return NextResponse.json(
-      { error: "bankAccountId required" },
+      { error: "Provide either bankAccountId or stellarAddress (or add a bank account in Settings)" },
       { status: 400 }
     );
   }
 
-  const recipient = createRecipient(session.id, name, bankAccountId);
+  const recipient = await createRecipient(session.id, name, bankAccountId, stellarAddress, phone);
   return NextResponse.json({ recipient });
 }

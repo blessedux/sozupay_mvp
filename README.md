@@ -79,6 +79,12 @@ npm run dev
 
 ---
 
+## Database (Supabase)
+
+Run migrations in Supabase SQL Editor if tables don't exist: [docs/supabase-users-table.sql](docs/supabase-users-table.sql), [docs/supabase-recipients-table.sql](docs/supabase-recipients-table.sql), [docs/supabase-organizations-table.sql](docs/supabase-organizations-table.sql). Organizations have `type` (store | ngo) and optional `soroban_contract_id` for Phase 2 disbursement.
+
+---
+
 ## Docs
 
 | Doc | Purpose |

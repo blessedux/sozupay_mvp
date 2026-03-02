@@ -56,6 +56,11 @@ export function completePayout(id: string, stellarTxHash?: string): void {
   }
 }
 
+export function failPayout(id: string): void {
+  const r = store.find((x) => x.id === id);
+  if (r) r.status = "failed";
+}
+
 export function listPayouts(userId: string, limit: number = 50): PayoutRecord[] {
   return store
     .filter((r) => r.userId === userId)

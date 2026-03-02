@@ -1,0 +1,36 @@
+"use client";
+
+import { PrivyProvider } from "@privy-io/react-auth";
+
+// Client needs NEXT_PUBLIC_ prefix (Next.js only exposes these to the browser).
+// Use same value as PRIVY_APP_ID.
+const appId = process.env.NEXT_PUBLIC_PRIVY_APP_ID ?? "";
+
+export function PrivyProviderWrapper({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  if (!appId) {
+    return <>{children}</>;
+  }
+
+  return (
+    <PrivyProvider
+      appId={appId}
+      config={{
+        loginMethods: ["email", "passkey"],
+        appearance: {
+          theme: "light",
+          accentColor: "#111827",
+        },
+        embeddedWallets: {
+          ethereum: { createOnLogin: "off" },
+          solana: { createOnLogin: "off" },
+        },
+      }}
+    >
+      {children}
+    </PrivyProvider>
+  );
+}

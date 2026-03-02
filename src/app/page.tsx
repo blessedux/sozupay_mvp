@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { HomeSignInButton } from "@/components/HomeSignInButton";
 
 export default function HomePage() {
   return (
@@ -7,12 +7,7 @@ export default function HomePage() {
       <p className="mt-2 text-gray-600 dark:text-gray-400 text-center">
         One wallet, one source of truth.
       </p>
-      <Link
-        href="/login"
-        className="mt-6 rounded-md bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 px-4 py-2 font-medium"
-      >
-        Sign in
-      </Link>
+      <HomeSignInButton />
     </main>
   );
 }
