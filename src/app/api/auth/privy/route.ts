@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { cookies } from "next/headers";
 import { verifyAccessToken } from "@privy-io/node";
 import { setSession } from "@/lib/auth/session";
 import { getOrCreateUserByPrivy } from "@/lib/db/users";
@@ -55,23 +56,33 @@ export async function POST(request: NextRequest) {
       ? body.email.trim()
       : `privy-${claims.user_id.slice(-8)}`;
 
+  let user;
   try {
-    const user = await getOrCreateUserByPrivy(claims.user_id, email);
+    user = await getOrCreateUserByPrivy(claims.user_id, email);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.error("[auth/privy] getOrCreateUserByPrivy failed:", message, err);
+    const isConfig = message.includes("Missing Supabase") || message.includes("env");
+    return NextResponse.json(
+      { error: isConfig ? "Server configuration error. Check Supabase env." : "Failed to create or load user." },
+      { status: isConfig ? 503 : 500 }
+    );
+  }
 
+  try {
     await setSession({
       id: user.privy_user_id,
       email: user.email,
       twoFactorEnabled: false,
     });
-
-    return NextResponse.json({ ok: true });
+    await cookies();
   } catch (err) {
-    const message =
-      err instanceof Error ? err.message : "Failed to create or load user";
-    console.error("[auth/privy]", message, err);
+    console.error("[auth/privy] setSession failed:", err instanceof Error ? err.message : err, err);
     return NextResponse.json(
-      { error: message },
+      { error: "Failed to set session." },
       { status: 500 }
     );
   }
+
+  return NextResponse.json({ ok: true });
 }

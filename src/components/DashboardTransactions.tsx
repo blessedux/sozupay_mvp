@@ -27,7 +27,7 @@ export default function DashboardTransactions() {
     <div>
       <h2 className="text-lg font-semibold">Recent transactions</h2>
       <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-        Each row links to Stellar Expert for audit.
+        Organization wallet activity. Each row links to Stellar Expert for audit.
       </p>
       {loading ? (
         <div className="mt-4 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">

@@ -6,11 +6,22 @@ import { getTransactions } from "@/lib/stellar/transactions";
 /**
  * Aggregated business finance stats for the dashboard.
  * Uses the organization disbursement wallet balance when the user has an org with one; otherwise user wallet.
- * All monetary values are in USD (fiat received is stored as USDC = USD).
+ * When authenticated but no wallet yet, returns zeros so the dashboard still loads.
  */
 export async function GET() {
   const publicKey = await getDashboardBalancePublicKey();
   if (!publicKey) {
+    const { getSession } = await import("@/lib/auth/session");
+    const session = await getSession();
+    if (session) {
+      return NextResponse.json({
+        balanceUsd: "0.00",
+        transactionCount: 0,
+        apyPercent: 0,
+        creditAvailableUsd: "0.00",
+        currency: "USD",
+      });
+    }
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -25,7 +36,6 @@ export async function GET() {
   const apyPercent = 0;
 
   // Credit available: placeholder heuristic (e.g. up to 50% of balance as credit line).
-  // Replace with real credit/underwriting API when available.
   const creditAvailableNum = Math.max(0, balanceNum * 0.5);
 
   return NextResponse.json({

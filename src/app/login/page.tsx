@@ -1,19 +1,43 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { usePrivy, useLogin } from "@privy-io/react-auth";
+import { DarkGradientBg } from "@/components/ui/elegant-dark-pattern";
 
 export default function LoginPage() {
   const router = useRouter();
-  const { ready, authenticated, user, getAccessToken } = usePrivy();
+  const { ready, authenticated, user, getAccessToken, logout: privyLogout } = usePrivy();
   const { login: openLoginModal } = useLogin();
 
   const [syncing, setSyncing] = useState(false);
   const [error, setError] = useState("");
+  const [clearing, setClearing] = useState(true);
+  const clearedRef = useRef(false);
 
-  // Sync Privy session to our backend and redirect to dashboard
+  // On /login we always require auth: clear our session and Privy state so user must choose email each time
+  useEffect(() => {
+    if (!ready) return;
+    if (clearedRef.current) return;
+    clearedRef.current = true;
+    (async () => {
+      try {
+        await fetch("/api/auth/clear-session", { credentials: "include" });
+      } catch {
+        // ignore
+      }
+      try {
+        if (typeof privyLogout === "function") await privyLogout();
+      } catch {
+        // ignore
+      }
+      setClearing(false);
+    })();
+  }, [ready, privyLogout]);
+
+  // Sync Privy session to our backend and redirect to org picker (then they choose org before dashboard)
   useEffect(() => {
     if (!ready || !authenticated || !user) return;
 
@@ -41,6 +65,7 @@ export default function LoginPage() {
 
         const res = await fetch("/api/auth/privy", {
           method: "POST",
+          credentials: "include",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${accessToken}`,
@@ -58,8 +83,8 @@ export default function LoginPage() {
           setError(data.error ?? "Failed to sign in");
           return;
         }
-        // Always go to dashboard; OnboardingRedirect (using /api/profile) will redirect to create-org or set-payout-wallet if needed
-        router.replace("/dashboard");
+        // Go to org picker; user selects which org to manage (or creates one) before dashboard
+        router.replace("/onboarding/organizations");
       } catch (e) {
         if (cancelled) return;
         if (e instanceof Error) {
@@ -82,50 +107,79 @@ export default function LoginPage() {
   }, [ready, authenticated, user, getAccessToken, router]);
 
   const usePrivyAuth = !!process.env.NEXT_PUBLIC_PRIVY_APP_ID;
+  const isClearingSession = clearing && authenticated;
 
-  if (usePrivyAuth && authenticated) {
+  if (usePrivyAuth && authenticated && !isClearingSession) {
     return (
-      <main className="min-h-screen flex flex-col items-center justify-center gap-4 p-4 bg-gray-50 dark:bg-gray-900">
-        {syncing && (
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            Redirecting…
-          </p>
-        )}
-        {error && (
-          <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
-        )}
-      </main>
+      <DarkGradientBg>
+        <main className="min-h-screen flex flex-col items-center justify-center gap-4 p-4 dark text-white">
+          <Image
+            src="/sozucapital_logo.png"
+            alt="Sozu Capital"
+            width={120}
+            height={120}
+            className="mb-2 object-contain"
+            priority
+          />
+          {syncing && (
+            <p className="text-sm text-gray-300">Redirecting…</p>
+          )}
+          {error && (
+            <p className="text-sm text-red-400">{error}</p>
+          )}
+        </main>
+      </DarkGradientBg>
     );
   }
 
   if (usePrivyAuth) {
     return (
-      <main className="min-h-screen flex items-center justify-center p-4 bg-gray-50 dark:bg-gray-900">
-        <button
-          type="button"
-          onClick={() => ready && openLoginModal()}
-          disabled={!ready}
-          className="rounded-md bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 py-2.5 px-6 font-medium hover:opacity-90 transition-opacity disabled:opacity-60 disabled:cursor-not-allowed"
-        >
-          Log in
-        </button>
-      </main>
+      <DarkGradientBg>
+        <main className="min-h-screen flex flex-col items-center justify-center gap-4 p-4 dark text-white">
+          <Image
+            src="/sozucapital_logo.png"
+            alt="Sozu Capital"
+            width={120}
+            height={120}
+            className="mb-2 object-contain"
+            priority
+          />
+          <button
+            type="button"
+            onClick={() => ready && openLoginModal()}
+            disabled={!ready}
+            className="rounded-md bg-white text-gray-900 py-2.5 px-6 font-medium hover:opacity-90 transition-opacity disabled:opacity-60 disabled:cursor-not-allowed"
+          >
+            Log in
+          </button>
+        </main>
+      </DarkGradientBg>
     );
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center p-4 bg-gray-50 dark:bg-gray-900">
-      <div className="w-full max-w-sm rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm text-center">
-        <p className="text-sm text-gray-500 dark:text-gray-400">
-          Privy is not configured. Set NEXT_PUBLIC_PRIVY_APP_ID to use login.
-        </p>
-        <Link
-          href="/"
-          className="mt-4 inline-block rounded-md bg-gray-200 dark:bg-gray-700 py-2 px-4 text-sm font-medium text-gray-900 dark:text-gray-100"
-        >
-          Go to home
-        </Link>
-      </div>
-    </main>
+    <DarkGradientBg>
+      <main className="min-h-screen flex flex-col items-center justify-center gap-4 p-4 dark text-white">
+        <Image
+          src="/sozucapital_logo.png"
+          alt="Sozu Capital"
+          width={120}
+          height={120}
+          className="mb-2 object-contain"
+          priority
+        />
+        <div className="w-full max-w-sm rounded-lg border border-white/10 bg-black/40 backdrop-blur-sm p-6 shadow-lg text-center">
+          <p className="text-sm text-gray-300">
+            Privy is not configured. Set NEXT_PUBLIC_PRIVY_APP_ID to use login.
+          </p>
+          <Link
+            href="/"
+            className="mt-4 inline-block rounded-md border border-white/20 bg-white/10 py-2 px-4 text-sm font-medium text-white hover:bg-white/20"
+          >
+            Go to home
+          </Link>
+        </div>
+      </main>
+    </DarkGradientBg>
   );
 }

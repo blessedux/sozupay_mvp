@@ -18,10 +18,14 @@ export function OnboardingRedirect() {
       router.replace("/onboarding/create-organization");
       return;
     }
+    if (profile.needsOrganization) {
+      router.replace("/onboarding/organizations");
+      return;
+    }
     if (profile.needsPayoutWalletSetup) {
       router.replace("/onboarding/set-payout-wallet");
     }
-  }, [profile?.needsOrgCreation, profile?.needsPayoutWalletSetup, profile, router]);
+  }, [profile?.needsOrgCreation, profile?.needsOrganization, profile?.needsPayoutWalletSetup, profile, router]);
 
   return null;
 }

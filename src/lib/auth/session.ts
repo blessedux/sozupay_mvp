@@ -12,6 +12,8 @@ export interface SessionUser {
   id: string;
   email: string;
   twoFactorEnabled?: boolean;
+  /** Selected organization to manage; set after user picks on org selection page. */
+  orgId?: string | null;
 }
 
 function sign(value: string): string {

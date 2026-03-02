@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getSession } from "@/lib/auth/session";
+import { getSession, setSession } from "@/lib/auth/session";
 import { getUserByPrivyId, getOrCreateUserByPrivy } from "@/lib/db/users";
 import { getOrganizationForUser } from "@/lib/db/organizations";
 import { getOrgDisbursementPublicKey } from "@/lib/stellar/sendUsdc";
@@ -37,8 +37,20 @@ export async function GET() {
   const needsOrgCreation =
     user.admin_level === "super_admin" && !user.org_id;
 
+  /** Any user without an org must go through organization step (create or get added). */
+  const needsOrganization = !user.org_id;
+
   const org_stellar_disbursement_public_key = org?.stellar_disbursement_public_key ?? null;
   const org_has_stored_secret = !!(org?.stellar_disbursement_secret_encrypted);
+
+  // If user has an org but session has no orgId (e.g. old session), set it so dashboard works
+  if (user.org_id && session.orgId !== user.org_id) {
+    try {
+      await setSession({ ...session, orgId: user.org_id });
+    } catch {
+      // non-fatal: continue and return profile
+    }
+  }
 
   return NextResponse.json({
     email: user.email,
@@ -53,5 +65,6 @@ export async function GET() {
     activation_requested_at: user.activation_requested_at,
     needsPayoutWalletSetup,
     needsOrgCreation,
+    needsOrganization,
   });
 }

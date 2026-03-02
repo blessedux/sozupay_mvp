@@ -12,6 +12,7 @@ import {
 export type DashboardProfile = {
   needsPayoutWalletSetup?: boolean;
   needsOrgCreation?: boolean;
+  needsOrganization?: boolean;
   admin_level?: string | null;
   org_id?: string | null;
 };
@@ -33,10 +34,17 @@ export function DashboardProfileProvider({ children }: { children: ReactNode }) 
 
   const fetchProfile = useCallback(() => {
     setLoading(true);
-    fetch("/api/profile")
-      .then((r) => (r.ok ? r.json() : {}))
-      .then((p: DashboardProfile) => {
-        setProfile(p);
+    fetch("/api/profile", { credentials: "include" })
+      .then((r) => {
+        if (r.status === 401) {
+          setProfile(null);
+          if (typeof window !== "undefined") window.location.href = "/login";
+          return;
+        }
+        return r.ok ? r.json() : {};
+      })
+      .then((p: DashboardProfile | void) => {
+        if (p && typeof p === "object") setProfile(p);
       })
       .catch(() => setProfile(null))
       .finally(() => setLoading(false));

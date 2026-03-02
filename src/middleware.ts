@@ -28,15 +28,13 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Privy auth (or real auth): protect dashboard and onboarding
+  // Privy auth: protect dashboard and onboarding; do NOT redirect away from /login when session exists
+  // so that user always sees login and can choose email (we clear session + Privy on login page)
   const isDashboard = request.nextUrl.pathname.startsWith("/dashboard");
   const isOnboarding = request.nextUrl.pathname.startsWith("/onboarding");
   const isAuthSuccess = request.nextUrl.pathname === "/auth/success";
   if ((isDashboard || isOnboarding || isAuthSuccess) && !session) {
     return NextResponse.redirect(new URL("/login", request.url));
-  }
-  if (isLogin && session) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
   }
   return NextResponse.next();
 }

@@ -22,7 +22,7 @@ export default function VaultPage() {
     <div>
       <h1 className="text-2xl font-bold">Vault / yield</h1>
       <p className="mt-1 text-gray-600 dark:text-gray-400">
-        Balance in vault, current APY, accrued yield. Principal 100% yours.
+        Organization wallet DeFi allocation: balance in vault, APY, accrued yield.
       </p>
 
       <div className="mt-6 rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/20 p-4 max-w-xl">

@@ -6,10 +6,23 @@ const FIAT_RATE_SOURCE = "1 USDC = 1 USD (display rate)";
 
 /**
  * USDC balance for the dashboard. Uses org disbursement wallet when user has an org with one; else user wallet.
+ * When authenticated but no wallet yet (e.g. before org setup), returns zeros so the dashboard still loads.
  */
 export async function GET() {
   const publicKey = await getDashboardBalancePublicKey();
   if (!publicKey) {
+    const { getSession } = await import("@/lib/auth/session");
+    const session = await getSession();
+    if (session) {
+      return NextResponse.json({
+        usdc: "0",
+        available: "0",
+        inVault: "0",
+        fiatAmount: "0.00",
+        fiatCurrency: "USD",
+        rateSource: FIAT_RATE_SOURCE,
+      });
+    }
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

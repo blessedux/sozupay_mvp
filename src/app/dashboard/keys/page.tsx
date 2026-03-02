@@ -1,11 +1,26 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { usePrivy, useLinkAccount } from "@privy-io/react-auth";
 
 export default function KeysPage() {
   const [wallet, setWallet] = useState<{ publicKey: string; network: string } | null>(null);
   const [loading, setLoading] = useState(true);
   const [recoverySent, setRecoverySent] = useState(false);
+  const [passkeyError, setPasskeyError] = useState<string | null>(null);
+
+  const { user, ready } = usePrivy();
+  const { linkPasskey } = useLinkAccount({
+    onSuccess: () => setPasskeyError(null),
+    onError: (err) => setPasskeyError(err?.message ?? "Failed to create passkey"),
+  });
+
+  const usePrivyAuth = !!process.env.NEXT_PUBLIC_PRIVY_APP_ID;
+  const hasPasskeyLinkedAccount =
+    ready &&
+    user &&
+    Array.isArray((user as { linkedAccounts?: { type: string }[] }).linkedAccounts) &&
+    (user as { linkedAccounts: { type: string }[] }).linkedAccounts.some((a) => a.type === "passkey");
 
   useEffect(() => {
     fetch("/api/wallet")
@@ -21,6 +36,11 @@ export default function KeysPage() {
       .catch(() => {});
   }
 
+  function handleCreateOrManagePasskey() {
+    setPasskeyError(null);
+    linkPasskey?.();
+  }
+
   return (
     <div>
       <h1 className="text-2xl font-bold">Keys & custody</h1>
@@ -31,6 +51,32 @@ export default function KeysPage() {
           according to your recovery method. We never custody principal.
         </p>
       </div>
+
+      {usePrivyAuth && ready && (
+        <section className="mt-8">
+          <h2 className="text-lg font-semibold">Passkey</h2>
+          <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+            Create a passkey (Face ID, Touch ID, or device PIN) to sign in without email. Stored by
+            Privy—not in our database. You can then choose &quot;I have a passkey&quot; on the login
+            page.
+          </p>
+          {hasPasskeyLinkedAccount ? (
+            <p className="mt-2 text-sm text-green-600 dark:text-green-400">
+              You have a passkey set up. Use it to sign in from the login page.
+            </p>
+          ) : null}
+          {passkeyError && (
+            <p className="mt-2 text-sm text-red-600 dark:text-red-400">{passkeyError}</p>
+          )}
+          <button
+            type="button"
+            onClick={handleCreateOrManagePasskey}
+            className="mt-3 rounded-md bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 px-3 py-2 text-sm font-medium hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {hasPasskeyLinkedAccount ? "Add another passkey" : "Create passkey"}
+          </button>
+        </section>
+      )}
 
       {loading ? (
         <p className="mt-6 text-sm text-gray-500">Loading…</p>

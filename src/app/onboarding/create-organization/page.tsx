@@ -59,7 +59,7 @@ export default function CreateOrganizationPage() {
   function handleContinue() {
     if (!backupConfirmed) return;
     setStep("done");
-    router.replace("/dashboard");
+    router.replace("/onboarding/organizations");
   }
 
   if (step === "done") {
@@ -70,14 +70,14 @@ export default function CreateOrganizationPage() {
             Organization created
           </h1>
           <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-            You can now set up your admin payout wallet (if needed) and start sending payouts from your organization wallet.
+            You can now choose this organization to manage and go to the dashboard.
           </p>
           <div className="mt-6 flex flex-col gap-2">
             <Link
-              href="/dashboard"
+              href="/onboarding/organizations"
               className="w-full text-center rounded-md bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 py-2.5 px-4 font-medium"
             >
-              Go to dashboard
+              Choose organization & continue
             </Link>
             <Link
               href="/dashboard/profile"

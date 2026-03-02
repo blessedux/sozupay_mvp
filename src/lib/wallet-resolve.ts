@@ -18,24 +18,21 @@ export async function getWalletPublicKey(): Promise<string | null> {
 }
 
 /**
- * Resolve the public key whose USDC balance should be shown on the dashboard.
- * Prefer the organization disbursement wallet when the user belongs to an org that has one;
- * otherwise fall back to the user's wallet.
- * Returns null if neither is available.
+ * Resolve the public key for dashboard balance, tx history, and DeFi/vault.
+ * This app is organization-centric: the dashboard always shows the organization's
+ * disbursement wallet, never the user's personal wallet.
+ * Returns null if the user has no org or the org has no disbursement wallet yet.
  */
 export async function getDashboardBalancePublicKey(): Promise<string | null> {
   const session = await getSession();
   if (!session) return null;
 
   const user = await getUserByPrivyId(session.id);
-  if (!user) return null;
+  const orgId = session.orgId ?? user?.org_id ?? null;
+  if (!orgId) return null;
 
-  if (user.org_id) {
-    const org = await getOrganizationForUser(user.org_id);
-    if (org?.stellar_disbursement_public_key) {
-      return org.stellar_disbursement_public_key;
-    }
-  }
+  const org = await getOrganizationForUser(orgId);
+  if (!org?.stellar_disbursement_public_key) return null;
 
-  return user.stellar_public_key ?? null;
+  return org.stellar_disbursement_public_key;
 }

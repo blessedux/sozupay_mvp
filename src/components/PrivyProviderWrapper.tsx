@@ -28,6 +28,10 @@ export function PrivyProviderWrapper({
           ethereum: { createOnLogin: "off" },
           solana: { createOnLogin: "off" },
         },
+        passkeys: {
+          // Keep passkey as login method even if user unenrolls from MFA
+          shouldUnlinkOnUnenrollMfa: false,
+        },
       }}
     >
       {children}

@@ -27,7 +27,7 @@ export default function TransactionsPage() {
     <div>
       <h1 className="text-2xl font-bold">Transactions</h1>
       <p className="mt-1 text-gray-600 dark:text-gray-400">
-        Date, amount, type, source, status. Each row links to Stellar Expert.
+        Organization wallet activity. Date, amount, type, source, status. Each row links to Stellar Expert.
       </p>
       {loading ? (
         <div className="mt-6 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
