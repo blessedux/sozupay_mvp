@@ -87,6 +87,7 @@ Before moving to the next **year-phase**:
 
 | Focus | Document |
 |-------|----------|
+| **Insta Awards 30-day sprint** (Landing, SDP Sozu Wallet provider, Dashboard MVP) | [insta-awards-30day-sprint-plan.md](./insta-awards-30day-sprint-plan.md) |
 | **NGO disbursement + Sozu wallet + DeFi + offramp** | [ngo-disbursement-wallet-dev-plan.md](./ngo-disbursement-wallet-dev-plan.md) |
 | **Production dashboard & simultaneous disbursements** | [production-disbursements-tasks.md](./production-disbursements-tasks.md) |
 | **Technical spec** | [technical-spec.md](./technical-spec.md) |

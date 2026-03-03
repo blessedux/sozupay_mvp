@@ -25,6 +25,8 @@ Based on [docs/technical-spec.md](docs/technical-spec.md). Used for merchant/rec
 
 Tracked in detail in **[ngo-disbursement-wallet-dev-plan.md](ngo-disbursement-wallet-dev-plan.md)**. This section is a high-level checklist aligned with that plan and the MUJERES 2000 requirements.
 
+**Insta Awards 30-day sprint:** See **[insta-awards-30day-sprint-plan.md](insta-awards-30day-sprint-plan.md)** for scope: (1) Conversion landing page, (2) Sozu Wallet as SDP provider, (3) NGO Dashboard MVP — persistence + single on-chain payout (Phases A+B).
+
 ### Core infrastructure (Months 0–3)
 
 - [ ] Sozu Wallet: non-custodial, USDC on Stellar, ARS default display, passkey/MPC
