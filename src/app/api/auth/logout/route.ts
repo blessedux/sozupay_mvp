@@ -20,3 +20,11 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   return performLogout(request);
 }
+
+/** HEAD/OPTIONS: avoid 405 when production sends prefetch, health checks, or CORS preflight. */
+export async function HEAD(request: NextRequest) {
+  return performLogout(request);
+}
+export async function OPTIONS() {
+  return new NextResponse(null, { status: 204 });
+}
