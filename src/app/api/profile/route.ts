@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getSession, setSession } from "@/lib/auth/session";
 import { getUserByPrivyId, getOrCreateUserByPrivy } from "@/lib/db/users";
-import { getOrganizationForUser } from "@/lib/db/organizations";
+import { getOrganizationForUser, getDefaultOrganization } from "@/lib/db/organizations";
 import { getOrgDisbursementPublicKey } from "@/lib/stellar/sendUsdc";
 
 /**
@@ -37,8 +37,18 @@ export async function GET() {
   const needsOrgCreation =
     user.admin_level === "super_admin" && !user.org_id;
 
-  /** Any user without an org must go through organization step (create or get added). */
-  const needsOrganization = !user.org_id;
+  /** Default org (e.g. Mujeres2000) that any user can select to view dashboard. */
+  const defaultOrg = await getDefaultOrganization();
+  const hasValidSessionOrg =
+    !!session.orgId &&
+    (user.org_id === session.orgId || defaultOrg?.id === session.orgId);
+
+  /**
+   * User must go to org picker only if they have no assigned org AND no valid org in session.
+   * Once they select the default org (or their assigned org), session.orgId is set and they
+   * can stay on dashboard — avoids redirect loop for new users viewing the public NGO.
+   */
+  const needsOrganization = !user.org_id && !hasValidSessionOrg;
 
   const org_stellar_disbursement_public_key = org?.stellar_disbursement_public_key ?? null;
   const org_has_stored_secret = !!(org?.stellar_disbursement_secret_encrypted);

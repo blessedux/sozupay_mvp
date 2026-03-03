@@ -13,6 +13,8 @@ export type User = {
   admin_level: "user" | "admin" | "super_admin";
   org_id: string | null;
   activation_requested_at: string | null;
+  /** Org the user was viewing when they requested activation (for "request as org admin"). */
+  activation_requested_org_id: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -60,10 +62,19 @@ export async function getUserByPrivyId(
   return (data as User) ?? null;
 }
 
-export async function setActivationRequested(privyUserId: string): Promise<User | null> {
+export async function setActivationRequested(
+  privyUserId: string,
+  orgId?: string | null
+): Promise<User | null> {
+  const payload: { activation_requested_at: string; activation_requested_org_id?: string | null } = {
+    activation_requested_at: new Date().toISOString(),
+  };
+  if (orgId !== undefined) {
+    payload.activation_requested_org_id = orgId || null;
+  }
   const { data, error } = await getSupabase()
     .from("users")
-    .update({ activation_requested_at: new Date().toISOString() })
+    .update(payload)
     .eq("privy_user_id", privyUserId)
     .select()
     .single();
@@ -158,6 +169,27 @@ export async function updateUserOrgId(
   const { data, error } = await getSupabase()
     .from("users")
     .update({ org_id: orgId, updated_at: new Date().toISOString() })
+    .eq("privy_user_id", privyUserId)
+    .select()
+    .single();
+
+  if (error) return null;
+  return data as User;
+}
+
+/** Set org_id and admin_level for a user (e.g. when super_admin approves "request as org admin"). */
+export async function updateUserOrgIdAndAdmin(
+  privyUserId: string,
+  orgId: string,
+  adminLevel: "user" | "admin" | "super_admin"
+): Promise<User | null> {
+  const { data, error } = await getSupabase()
+    .from("users")
+    .update({
+      org_id: orgId,
+      admin_level: adminLevel,
+      updated_at: new Date().toISOString(),
+    })
     .eq("privy_user_id", privyUserId)
     .select()
     .single();

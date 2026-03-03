@@ -4,6 +4,7 @@ import { getUserByPrivyId, setActivationRequested } from "@/lib/db/users";
 
 /**
  * POST /api/profile/request-activation – user requests profile/wallet activation by admin.
+ * Stores session.orgId when present so approval can assign them as org admin for that org.
  */
 export async function POST() {
   const session = await getSession();
@@ -23,7 +24,7 @@ export async function POST() {
     );
   }
 
-  const updated = await setActivationRequested(session.id);
+  const updated = await setActivationRequested(session.id, session.orgId ?? undefined);
   if (!updated) {
     return NextResponse.json(
       { error: "Failed to submit activation request." },

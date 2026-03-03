@@ -1,14 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
-import { getUserByPrivyId, setUserAllowed } from "@/lib/db/users";
+import { getUserByPrivyId, setUserAllowed, updateUserOrgIdAndAdmin } from "@/lib/db/users";
+import { getOrganizationById } from "@/lib/db/organizations";
 import { fundClassicAccount, fundSmartAccount, isClassicAccount, isSmartAccount } from "@/lib/stellar/fund";
 
-function isAdmin(level: string) {
-  return level === "admin" || level === "super_admin";
-}
-
 /**
- * POST /api/admin/activate-user – set allowed=true and fund the user's wallet (admin/super_admin only).
+ * POST /api/admin/activate-user – set allowed=true and fund the user's wallet (super_admin only).
  * Body: { privy_user_id: string }
  * If the user has a classic Stellar account (G...), we submit a createAccount transaction to fund it.
  * Smart accounts (C...) require a separate Soroban flow (see docs/smart-accounts.md).
@@ -20,7 +17,7 @@ export async function POST(request: NextRequest) {
   }
 
   const currentUser = await getUserByPrivyId(session.id);
-  if (!currentUser || !isAdmin(currentUser.admin_level)) {
+  if (!currentUser || currentUser.admin_level !== "super_admin") {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
@@ -34,12 +31,22 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const updated = await setUserAllowed(privyUserId, true);
+  let updated = await setUserAllowed(privyUserId, true);
   if (!updated) {
     return NextResponse.json(
       { error: "User not found or update failed" },
       { status: 404 }
     );
+  }
+
+  // If they requested activation in org context and have no org yet, assign them as org admin
+  const requestedOrgId = updated.activation_requested_org_id ?? null;
+  if (requestedOrgId && !updated.org_id) {
+    const org = await getOrganizationById(requestedOrgId);
+    if (org) {
+      const withOrg = await updateUserOrgIdAndAdmin(privyUserId, org.id, "admin");
+      if (withOrg) updated = withOrg;
+    }
   }
 
   let fundTxHash: string | null = null;

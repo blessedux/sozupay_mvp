@@ -12,12 +12,15 @@ CREATE TABLE IF NOT EXISTS users (
   admin_level TEXT NOT NULL DEFAULT 'user' CHECK (admin_level IN ('user', 'admin', 'super_admin')),
   org_id TEXT,
   activation_requested_at TIMESTAMPTZ,
+  activation_requested_org_id TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 -- Add column if table already exists (run once):
 -- ALTER TABLE users ADD COLUMN IF NOT EXISTS activation_requested_at TIMESTAMPTZ;
+-- Org the user was viewing when they requested activation (for "request as org admin"):
+-- ALTER TABLE users ADD COLUMN IF NOT EXISTS activation_requested_org_id TEXT;
 
 -- Smart account (C...) created from user's G signer; used for display and funding when set.
 -- ALTER TABLE users ADD COLUMN IF NOT EXISTS stellar_smart_account_address TEXT;

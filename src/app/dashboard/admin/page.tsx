@@ -10,6 +10,8 @@ type PendingUser = {
   stellar_smart_account_address?: string | null;
   allowed: boolean;
   activation_requested_at: string | null;
+  activation_requested_org_id?: string | null;
+  requested_org_name?: string | null;
 };
 
 const STELLAR_EXPERT_BASE =
@@ -117,6 +119,13 @@ export default function AdminPage() {
                   <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
                     Requested: {u.activation_requested_at ? new Date(u.activation_requested_at).toLocaleString() : "—"}
                   </p>
+                  {u.requested_org_name ? (
+                    <p className="text-xs text-gray-600 dark:text-gray-300 mt-0.5">
+                      Requested as org admin: {u.requested_org_name}
+                    </p>
+                  ) : u.activation_requested_org_id ? (
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Requested (org id: {u.activation_requested_org_id})</p>
+                  ) : null}
                   {(u.stellar_smart_account_address || u.stellar_public_key) && (
                     <p className="text-xs font-mono text-gray-600 dark:text-gray-300 mt-1 break-all">
                       {u.stellar_smart_account_address ?? u.stellar_public_key}
@@ -153,7 +162,7 @@ export default function AdminPage() {
       </section>
 
       <p className="mt-6 text-xs text-gray-500 dark:text-gray-400">
-        Activate sets the user as allowed and funds their wallet (XLM). G accounts get createAccount; C accounts get a Payment. For G accounts, they can then add a USDC trustline from Profile.
+        Activate sets the user as allowed and funds their wallet (XLM). If they requested in org context, they are assigned as org admin. G accounts get createAccount; C accounts get a Payment. After activation, G-account users can add the USDC trustline from Profile.
       </p>
     </div>
   );

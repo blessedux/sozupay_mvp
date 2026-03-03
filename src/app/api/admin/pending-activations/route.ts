@@ -1,13 +1,12 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
 import { getUserByPrivyId, getPendingActivationUsers } from "@/lib/db/users";
-
-function isAdmin(level: string) {
-  return level === "admin" || level === "super_admin";
-}
+import { getOrganizationById } from "@/lib/db/organizations";
+import type { User } from "@/lib/db/users";
 
 /**
- * GET /api/admin/pending-activations – list users who requested activation (admin/super_admin only).
+ * GET /api/admin/pending-activations – list users who requested activation (super_admin only).
+ * Returns each user with requested_org_id and requested_org_name when they requested in org context.
  */
 export async function GET() {
   const session = await getSession();
@@ -16,10 +15,25 @@ export async function GET() {
   }
 
   const currentUser = await getUserByPrivyId(session.id);
-  if (!currentUser || !isAdmin(currentUser.admin_level)) {
+  if (!currentUser || currentUser.admin_level !== "super_admin") {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
   const pending = await getPendingActivationUsers();
-  return NextResponse.json({ users: pending });
+  const withOrgNames = await Promise.all(
+    pending.map(async (u: User) => {
+      const requestedOrgId = u.activation_requested_org_id ?? null;
+      let requested_org_name: string | null = null;
+      if (requestedOrgId) {
+        const org = await getOrganizationById(requestedOrgId);
+        requested_org_name = org?.name ?? null;
+      }
+      return {
+        ...u,
+        activation_requested_org_id: requestedOrgId,
+        requested_org_name,
+      };
+    })
+  );
+  return NextResponse.json({ users: withOrgNames });
 }

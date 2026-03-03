@@ -35,8 +35,7 @@ function NavLink({
 
 export function DashboardNav() {
   const { profile } = useDashboardProfile() ?? { profile: null };
-  const isAdmin =
-    profile?.admin_level === "admin" || profile?.admin_level === "super_admin";
+  const isSuperAdmin = profile?.admin_level === "super_admin";
 
   return (
     <nav className="mt-6 flex flex-col flex-1 min-h-0">
@@ -50,7 +49,7 @@ export function DashboardNav() {
         <NavLink href="/dashboard/payouts" label="Payouts" />
         <NavLink href="/dashboard/recipients" label="Recipients" />
         <NavLink href="/dashboard/profile" label="Profile" />
-        {isAdmin && <NavLink href="/dashboard/admin" label="Admin" indent />}
+        {isSuperAdmin && <NavLink href="/dashboard/admin" label="Admin" indent />}
         <NavLink href="/dashboard/keys" label="Keys & custody" indent />
       </div>
       <div className="mt-auto pt-4 border-t border-white/10">
