@@ -16,7 +16,7 @@ Contract at `contracts/disbursement_wallet/`: holds a token (e.g. USDC) and allo
 
 - [Soroban CLI](https://soroban.stellar.org/docs/getting-started/setup) installed.
 - A keypair with testnet XLM (e.g. create with Stellar Laboratory and fund via [Friendbot](https://laboratory.stellar.org/#explorer?resource=friendbot&endpoint=create)). Set as `--source` or in your default identity.
-- **USDC token contract address (testnet):** The disbursement wallet needs the Soroban contract ID for USDC. On testnet this is the Stellar Asset Contract (SAC) for USDC (issuer `GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5`). Resolve it via Stellar docs or deploy/wrap the asset; then record it in [docs/testnet-contracts.md](./testnet-contracts.md).
+- **USDC token contract address (testnet):** The disbursement wallet needs the Soroban contract ID for USDC. On testnet this is the Stellar Asset Contract (SAC) for USDC (issuer `GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5`). Resolve it via Stellar docs or deploy/wrap the asset; then record it in [testnet-contracts.md](./testnet-contracts.md).
 
 ### 1. Build the WASM
 
@@ -38,7 +38,7 @@ soroban contract deploy \
   --network testnet
 ```
 
-Copy the returned **contract ID** (starts with `C...`). Record it in [docs/testnet-contracts.md](./testnet-contracts.md) and (for the org) in the database as `soroban_contract_id`.
+Copy the returned **contract ID** (starts with `C...`). Record it in [testnet-contracts.md](./testnet-contracts.md) and (for the org) in the database as `soroban_contract_id`.
 
 ### 3. Initialize the contract
 

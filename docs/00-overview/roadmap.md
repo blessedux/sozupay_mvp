@@ -29,7 +29,7 @@ Each phase builds on:
 
 **Objective:** Launch a working NGO microcredit disbursement + tracking system in Argentina using USDC on Stellar.
 
-- **Months 0–3:** Core infrastructure (Sozu Wallet, USDC on Stellar, Soroban contracts, Defindex/Blend yield). For Blend: testnet contract addresses, supply/withdraw entrypoints, and backend-only vs vault-contract approach are in [testnet-contracts.md](./testnet-contracts.md#blend-integration).
+- **Months 0–3:** Core infrastructure (Sozu Wallet, USDC on Stellar, Soroban contracts, Defindex/Blend yield). For Blend: testnet contract addresses, supply/withdraw entrypoints, and backend-only vs vault-contract approach are in [testnet-contracts.md](../02-contracts/testnet-contracts.md#blend-integration).
 - **Months 2–6:** NGO Admin Dashboard (SozuPay Phase 1 — bulk beneficiaries, disbursement schedules, repayment tracking, transparency)
 - **Months 4–8:** Behavioral Credit Layer (Trust Score, borrowing caps, pilot micro-loans via Blend)
 - **Months 6–12:** Onboarding (first Argentine NGO, 500–2k recipients, MoneyGram offramp live)
@@ -87,11 +87,11 @@ Before moving to the next **year-phase**:
 
 | Focus | Document |
 |-------|----------|
-| **Insta Awards 30-day sprint** (Landing, SDP Sozu Wallet provider, Dashboard MVP) | [insta-awards-30day-sprint-plan.md](./insta-awards-30day-sprint-plan.md) |
-| **NGO disbursement + Sozu wallet + DeFi + offramp** | [ngo-disbursement-wallet-dev-plan.md](./ngo-disbursement-wallet-dev-plan.md) |
-| **Production dashboard & simultaneous disbursements** | [production-disbursements-tasks.md](./production-disbursements-tasks.md) |
+| **Insta Awards 30-day sprint** (Landing, SDP Sozu Wallet provider, Dashboard MVP) | [30day-sprint-plan.md](../03-planning/30day-sprint-plan.md) |
+| **NGO disbursement + Sozu wallet + DeFi + offramp** | [ngo-disbursement-wallet-dev-plan.md](../03-planning/ngo-disbursement-wallet-dev-plan.md) |
+| **Production dashboard & simultaneous disbursements** | [production-disbursements-tasks.md](../03-planning/production-disbursements-tasks.md) |
 | **Technical spec** | [technical-spec.md](./technical-spec.md) |
-| **NFRs** | [nfr.md](./nfr.md) |
+| **NFRs** | [nfr.md](../05-requirements/nfr.md) |
 
 ---
 

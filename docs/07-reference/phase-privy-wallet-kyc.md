@@ -85,7 +85,7 @@ This doc defines the first development phase: dashboard login via Privy, abstrac
 | Area | Choice |
 |------|--------|
 | Auth | Privy (email, optional passkey, recovery) |
-| Wallet | One Stellar keypair per user **client-side**; user registers public key + proof; we store only public key (see [self-custodial-auth-design.md](./self-custodial-auth-design.md)) |
+| Wallet | One Stellar keypair per user **client-side**; user registers public key + proof; we store only public key (see [self-custodial-auth-design.md](../01-architecture/self-custodial-auth-design.md)) |
 | Activation | Super admin sends XLM from funding account to user’s public key |
 | Users/roles | DB: `stellar_public_key`, `allowed`, `admin_level`, `org_id`; no secret keys; super admin allowlists and grants admin |
 | USDC | Stellar USDC trustline; Horizon + optional DB cache for audit |
@@ -104,7 +104,7 @@ This doc defines the first development phase: dashboard login via Privy, abstrac
 
 ## Docs and references
 
-- [self-custodial-auth-design.md](./self-custodial-auth-design.md) — no key custody; allowlist; super admin; org space
+- [self-custodial-auth-design.md](../01-architecture/self-custodial-auth-design.md) — no key custody; allowlist; super admin; org space
 - [Privy – React quickstart](https://docs.privy.io/basics/react/quickstart)
 - [Privy – Email & passkey](https://docs.privy.io/guide/react/configuration/login-methods)
 - [Stellar Horizon API](https://developers.stellar.org/api/horizon)

@@ -2,7 +2,7 @@
 
 **Purpose:** Define the Soroban yield router and the **NGO smart-account auto-yield** model: org deposits use smart accounts with logic baked in to target Defindex (and optionally Blend) via a default **strategic DeFi planner** working in the background—**no per-action user signing** required for the yield leg.
 
-**Scope:** Production launch requirement (Blend + Defindex integration). Aligned with [architecture-microcredit-disbursement.md](./architecture-microcredit-disbursement.md), [roadmap.md](./roadmap.md), [ngo-disbursement-wallet-dev-plan.md](./ngo-disbursement-wallet-dev-plan.md), and [testnet-contracts.md](./testnet-contracts.md).
+**Scope:** Production launch requirement (Blend + Defindex integration). Aligned with [architecture-microcredit-disbursement.md](../01-architecture/architecture-microcredit-disbursement.md), [roadmap.md](../00-overview/roadmap.md), [ngo-disbursement-wallet-dev-plan.md](../03-planning/ngo-disbursement-wallet-dev-plan.md), and [testnet-contracts.md](./testnet-contracts.md).
 
 ---
 
@@ -124,11 +124,11 @@
 
 | Topic | Document |
 |-------|----------|
-| Architecture, org wallet, vault | [architecture-microcredit-disbursement.md](./architecture-microcredit-disbursement.md) |
-| Org wallet Phase 2, Soroban disbursement | [org-wallet-design.md](./org-wallet-design.md), [soroban-disbursement-contract.md](./soroban-disbursement-contract.md) |
+| Architecture, org wallet, vault | [architecture-microcredit-disbursement.md](../01-architecture/architecture-microcredit-disbursement.md) |
+| Org wallet Phase 2, Soroban disbursement | [org-wallet-design.md](../01-architecture/org-wallet-design.md), [soroban-disbursement-contract.md](./soroban-disbursement-contract.md) |
 | Defindex/Blend, testnet addresses | [testnet-contracts.md](./testnet-contracts.md) |
-| NGO dev plan, yield | [ngo-disbursement-wallet-dev-plan.md](./ngo-disbursement-wallet-dev-plan.md) |
-| 30-day sprint, out of scope | [insta-awards-30day-sprint-plan.md](./insta-awards-30day-sprint-plan.md) |
+| NGO dev plan, yield | [ngo-disbursement-wallet-dev-plan.md](../03-planning/ngo-disbursement-wallet-dev-plan.md) |
+| 30-day sprint, out of scope | [30day-sprint-plan.md](../03-planning/30day-sprint-plan.md) |
 
 ---
 

@@ -1,10 +1,10 @@
 # NGO Disbursement Tool & Sozu Wallet — Dev Plan
 
-Focused development plan for **Year 1** foundation: NGO microcredit disbursement, Sozu Wallet for recipients, native DeFi (Blend/Defindex), and offramping (MoneyGram). Tied to [roadmap.md](./roadmap.md).
+Focused development plan for **Year 1** foundation: NGO microcredit disbursement, Sozu Wallet for recipients, native DeFi (Blend/Defindex), and offramping (MoneyGram). Tied to [roadmap.md](../00-overview/roadmap.md).
 
 **Scope:** Argentina, USDC on Stellar, non-custodial wallet, behavioral credit pilot.
 
-**First NGO partner:** MUJERES 2000 — requirements from [Requerimientos_funcionales_MUJERES_2000.pdf](./Requerimientos_funcionales_MUJERES_2000.pdf).
+**First NGO partner:** MUJERES 2000 — requirements from [Requerimientos_funcionales_MUJERES_2000.pdf](../05-requirements/Requerimientos_funcionales_MUJERES_2000.pdf).
 
 ---
 
@@ -119,7 +119,7 @@ Digital loan application replaces the current Excel form. Data feeds beneficiary
 
 ## 5. Disbursement & Schedules (Months 3–5)
 
-Align with [production-disbursements-tasks.md](./production-disbursements-tasks.md) for persistence, batch model, and execution.
+Align with [production-disbursements-tasks.md](production-disbursements-tasks.md) for persistence, batch model, and execution.
 
 | Task | Description | Priority |
 |------|-------------|----------|

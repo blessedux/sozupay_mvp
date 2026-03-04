@@ -2,7 +2,7 @@
 
 **Purpose:** Single reference for how the Sozu stack coordinates between the **NGO Dashboard (SozuPay)** and **individual wallets (Sozu Wallet)** to achieve end-to-end secure, auditable, and scalable disbursement of microcredits (USDC on Stellar).
 
-**Scope:** Year 1 NGO disbursement (Argentina, USDC on Stellar). First NGO partner: MUJERES 2000. Aligned with [roadmap.md](./roadmap.md), [ngo-disbursement-wallet-dev-plan.md](./ngo-disbursement-wallet-dev-plan.md), [insta-awards-30day-sprint-plan.md](./insta-awards-30day-sprint-plan.md), [org-wallet-design.md](./org-wallet-design.md), and [production-disbursements-tasks.md](./production-disbursements-tasks.md).
+**Scope:** Year 1 NGO disbursement (Argentina, USDC on Stellar). First NGO partner: MUJERES 2000. Aligned with [roadmap.md](../00-overview/roadmap.md), [ngo-disbursement-wallet-dev-plan.md](../03-planning/ngo-disbursement-wallet-dev-plan.md), [30day-sprint-plan.md](../03-planning/30day-sprint-plan.md), [org-wallet-design.md](./org-wallet-design.md), and [production-disbursements-tasks.md](../03-planning/production-disbursements-tasks.md).
 
 ---
 
@@ -263,14 +263,14 @@
     require_auth(caller); caller in signers list; backend builds invoke, admin signs.
 ```
 
-See [org-wallet-design.md](./org-wallet-design.md) and [soroban-disbursement-contract.md](./soroban-disbursement-contract.md).
+See [org-wallet-design.md](./org-wallet-design.md) and [soroban-disbursement-contract.md](../02-contracts/soroban-disbursement-contract.md).
 
 ---
 
 ## 6b. NGO Smart Accounts & Yield (Production)
 
 - **NGO org deposits** use **smart accounts (C)** with logic baked in to target Defindex (and optionally Blend). Idle USDC is routed via a **yield router contract**; a default **strategic DeFi planner** runs in the background—**no per-action user signing** for the yield leg.
-- **Yield router (C):** Channels org (and optionally user) USDC to Defindex strategies; tracks per-depositor principal; redeems on withdraw. See [yield-router-contract-spec.md](./yield-router-contract-spec.md).
+- **Yield router (C):** Channels org (and optionally user) USDC to Defindex strategies; tracks per-depositor principal; redeems on withdraw. See [yield-router-contract-spec.md](../02-contracts/yield-router-contract-spec.md).
 - **Strategic DeFi planner:** Allocates/rebalances by policy and risk; runs as keeper or authorized contract so NGOs earn yield by default without extra UX.
 
 ---
@@ -296,7 +296,7 @@ See [org-wallet-design.md](./org-wallet-design.md) and [soroban-disbursement-con
 3. **Recipient address** is the same as the **Sozu Wallet** account for that beneficiary; disbursement lands in their non-custodial wallet.
 4. **Sozu Wallet** shows balance (USDC/ARS), history, and (with offramp) cash-out; optional SDP path for third-party senders to send to Sozu.
 5. **Soroban** (optional) adds on-chain vault, disbursement/repayment tracking, and trust score; Defindex/Blend add yield on idle USDC.
-6. **Yield router & NGO auto-yield:** Org smart accounts (C) route idle USDC to Defindex via the yield router; a strategic DeFi planner works in the background so NGOs earn yield without signing each allocation. See [yield-router-contract-spec.md](./yield-router-contract-spec.md).
+6. **Yield router & NGO auto-yield:** Org smart accounts (C) route idle USDC to Defindex via the yield router; a strategic DeFi planner works in the background so NGOs earn yield without signing each allocation. See [yield-router-contract-spec.md](../02-contracts/yield-router-contract-spec.md).
 7. **E2E**: Application → Beneficiary (with Stellar address) → Batch/line → Backend signs and submits → Horizon → USDC in Sozu Wallet → Audit and txHash stored.
 
 ---
@@ -305,15 +305,15 @@ See [org-wallet-design.md](./org-wallet-design.md) and [soroban-disbursement-con
 
 | Topic                                                              | Document                                                                     |
 | ------------------------------------------------------------------ | ---------------------------------------------------------------------------- |
-| 30-day sprint (Landing, SDP provider, Dashboard MVP single payout) | [insta-awards-30day-sprint-plan.md](./insta-awards-30day-sprint-plan.md)     |
-| NGO disbursement full plan, MUJERES 2000, milestones               | [ngo-disbursement-wallet-dev-plan.md](./ngo-disbursement-wallet-dev-plan.md) |
-| Roadmap (Year 1/2/4), dev cycles                                   | [roadmap.md](./roadmap.md)                                                   |
-| Current tasks, Phase 1–10 + NGO focus                              | [todo.md](./todo.md)                                                         |
+| 30-day sprint (Landing, SDP provider, Dashboard MVP single payout) | [30day-sprint-plan.md](../03-planning/30day-sprint-plan.md)     |
+| NGO disbursement full plan, MUJERES 2000, milestones               | [ngo-disbursement-wallet-dev-plan.md](../03-planning/ngo-disbursement-wallet-dev-plan.md) |
+| Roadmap (Year 1/2/4), dev cycles                                   | [roadmap.md](../00-overview/roadmap.md)                                                   |
+| Current tasks, Phase 1–10 + NGO focus                              | [todo.md](../03-planning/todo.md)                                                         |
 | Org wallet and admin signing (Phase 1 & 2)                         | [org-wallet-design.md](./org-wallet-design.md)                               |
-| Batch model, persistence, execution (Phases A–F)                   | [production-disbursements-tasks.md](./production-disbursements-tasks.md)     |
-| Soroban disbursement contract (Phase 2)                            | [soroban-disbursement-contract.md](./soroban-disbursement-contract.md)       |
-| Yield router, NGO auto-yield, strategic DeFi planner               | [yield-router-contract-spec.md](./yield-router-contract-spec.md)             |
-| Product one-pager (e-commerce + value prop)                        | [onepager.md](./onepager.md)                                                 |
+| Batch model, persistence, execution (Phases A–F)                   | [production-disbursements-tasks.md](../03-planning/production-disbursements-tasks.md)     |
+| Soroban disbursement contract (Phase 2)                            | [soroban-disbursement-contract.md](../02-contracts/soroban-disbursement-contract.md)       |
+| Yield router, NGO auto-yield, strategic DeFi planner               | [yield-router-contract-spec.md](../02-contracts/yield-router-contract-spec.md)             |
+| Product one-pager (e-commerce + value prop)                        | [onepager.md](../00-overview/onepager.md)                                                 |
 
 ---
 

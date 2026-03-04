@@ -26,7 +26,7 @@ We want user-facing addresses to be **smart accounts (C)**:
 
 **Decision:** Prefer a **third-party factory** (e.g. [Crossmint stellar-smart-account](https://github.com/Crossmint/stellar-smart-account) or OpenZeppelin Stellar) if it provides a testnet deployment or a clear deploy path. Otherwise add and deploy **our own factory** in this repo (`contracts/smart_account_factory/`) so we control the ABI and testnet address.
 
-**ABI our backend expects** ([src/lib/stellar/smart-account.ts](../src/lib/stellar/smart-account.ts)):
+**ABI our backend expects** ([src/lib/stellar/smart-account.ts](../../src/lib/stellar/smart-account.ts)):
 
 - **Create method:** One argument `signer: Address` (the user’s G as Soroban Address). Default method name: `create_account`. Override with env `SMART_ACCOUNT_FACTORY_METHOD`.
 - **Optional view (deterministic C address):** If the factory exposes a read-only function that returns the smart account address for a given signer before deployment, set its name in env `SMART_ACCOUNT_GET_ADDRESS_VIEW` (e.g. `get_address`). Signature: `(signer: Address) -> Address`. The backend calls this first to get the C address, then invokes the create method so we can store C after a successful tx.

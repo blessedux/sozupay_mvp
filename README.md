@@ -1,6 +1,6 @@
 # SozuPay Dashboard
 
-Dashboard for the **EMPRENDE microcredit program** with our first NGO partner **MUJERES 2000**. Used by **Equipo interno** (staff) to manage beneficiaries, disbursements, repayments, and reporting. Roadmap and feature scope are driven by [MUJERES 2000 requirements](docs/Requerimientos_funcionales_MUJERES_2000.pdf) and documented in [docs/ngo-disbursement-wallet-dev-plan.md](docs/ngo-disbursement-wallet-dev-plan.md) and [docs/todo.md](docs/todo.md).
+Dashboard for the **EMPRENDE microcredit program** with our first NGO partner **MUJERES 2000**. Used by **Equipo interno** (staff) to manage beneficiaries, disbursements, repayments, and reporting. Roadmap and feature scope are driven by [MUJERES 2000 requirements](docs/05-requirements/Requerimientos_funcionales_MUJERES_2000.pdf) and documented in [docs/03-planning/ngo-disbursement-wallet-dev-plan.md](docs/03-planning/ngo-disbursement-wallet-dev-plan.md) and [docs/03-planning/todo.md](docs/03-planning/todo.md).
 
 ---
 
@@ -74,26 +74,29 @@ npm run dev
 
 ## Feature scope and roadmap
 
-- **Done:** Dashboard foundation (auth, wallet, balance, transactions, walls, payouts, recipients, audit). See [docs/todo.md](docs/todo.md) Phase 1–10.
-- **Current focus:** NGO disbursement and MUJERES 2000: loan application, beneficiaries, disbursement schedules, credit simulator, payment management, renewal, indicators, Salesforce. See [docs/ngo-disbursement-wallet-dev-plan.md](docs/ngo-disbursement-wallet-dev-plan.md) and [docs/todo.md](docs/todo.md).
+- **Done:** Dashboard foundation (auth, wallet, balance, transactions, walls, payouts, recipients, audit). See [docs/03-planning/todo.md](docs/03-planning/todo.md) Phase 1–10.
+- **Current focus:** NGO disbursement and MUJERES 2000: loan application, beneficiaries, disbursement schedules, credit simulator, payment management, renewal, indicators, Salesforce. See [docs/03-planning/ngo-disbursement-wallet-dev-plan.md](docs/03-planning/ngo-disbursement-wallet-dev-plan.md) and [docs/03-planning/todo.md](docs/03-planning/todo.md).
 
 ---
 
 ## Database (Supabase)
 
-Run migrations in Supabase SQL Editor if tables don't exist: [docs/supabase-users-table.sql](docs/supabase-users-table.sql), [docs/supabase-recipients-table.sql](docs/supabase-recipients-table.sql), [docs/supabase-organizations-table.sql](docs/supabase-organizations-table.sql). Organizations have `type` (store | ngo) and optional `soroban_contract_id` for Phase 2 disbursement.
+Run migrations in Supabase SQL Editor if tables don't exist: [docs/07-reference/supabase-users-table.sql](docs/07-reference/supabase-users-table.sql), [docs/07-reference/supabase-recipients-table.sql](docs/07-reference/supabase-recipients-table.sql), [docs/07-reference/supabase-organizations-table.sql](docs/07-reference/supabase-organizations-table.sql). Organizations have `type` (store | ngo) and optional `soroban_contract_id` for Phase 2 disbursement.
 
 ---
 
 ## Docs
 
+- **Official documentation:** [docs.sozu.capital](https://docs.sozu.capital/)
+- **This repo:** [docs/README.md](docs/README.md) for the full doc index and reading order.
+
 | Doc | Purpose |
 |-----|--------|
-| [docs/todo.md](docs/todo.md) | Task list and current focus (MUJERES 2000) |
-| [docs/ngo-disbursement-wallet-dev-plan.md](docs/ngo-disbursement-wallet-dev-plan.md) | Full dev plan, MUJERES 2000 modules, milestones |
-| [docs/roadmap.md](docs/roadmap.md) | Year 1 / 2 / 4 phasing |
-| [docs/runbooks.md](docs/runbooks.md) | Local dev, env vars, plug-in points |
-| [docs/technical-spec.md](docs/technical-spec.md) | Technical spec (foundation) |
+| [docs/03-planning/todo.md](docs/03-planning/todo.md) | Task list and current focus (MUJERES 2000) |
+| [docs/03-planning/ngo-disbursement-wallet-dev-plan.md](docs/03-planning/ngo-disbursement-wallet-dev-plan.md) | Full dev plan, MUJERES 2000 modules, milestones |
+| [docs/00-overview/roadmap.md](docs/00-overview/roadmap.md) | Year 1 / 2 / 4 phasing |
+| [docs/06-operations/runbooks.md](docs/06-operations/runbooks.md) | Local dev, env vars, plug-in points |
+| [docs/00-overview/technical-spec.md](docs/00-overview/technical-spec.md) | Technical spec (foundation) |
 
 ---
 

@@ -2,7 +2,7 @@
 
 ## 0. Stellar payouts: super_admin wallet and org options
 
-Payouts support **Classic** (G account) and **Soroban** (smart contract C) flows. See [org-wallet-design.md](org-wallet-design.md) Phase 1 and Phase 2.
+Payouts support **Classic** (G account) and **Soroban** (smart contract C) flows. See [org-wallet-design.md](../01-architecture/org-wallet-design.md) Phase 1 and Phase 2.
 
 ### Classic (Phase 1)
 
@@ -30,7 +30,7 @@ Only **super_admin** users can perform Stellar payouts. The payout is signed wit
 Recipients and (optional) organizations are stored in Supabase. Create tables if needed:
 
 1. Open Supabase Dashboard → SQL Editor.
-2. Run: [docs/supabase-recipients-table.sql](supabase-recipients-table.sql), [docs/supabase-users-table.sql](supabase-users-table.sql), [docs/supabase-organizations-table.sql](supabase-organizations-table.sql).
+2. Run: [supabase-recipients-table.sql](../07-reference/supabase-recipients-table.sql), [supabase-users-table.sql](../07-reference/supabase-users-table.sql), [supabase-organizations-table.sql](../07-reference/supabase-organizations-table.sql).
 3. Ensure `NEXT_PUBLIC_SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` are set in `.env.local`.
 
 ## 2. Verify recipients persist
@@ -80,7 +80,7 @@ When the org has a **Soroban disbursement contract** (`soroban_contract_id` set 
 ### Prerequisites
 
 - **Organizations table** with at least one org; set the super_admin user’s `org_id` to that org.
-- **Contract deployed**: build and deploy the disbursement wallet from `contracts/disbursement_wallet/` (see [docs/soroban-disbursement-contract.md](soroban-disbursement-contract.md)). Initialize it with the USDC token address and the super_admin’s public key as authorized signer. Fund the contract with USDC.
+- **Contract deployed**: build and deploy the disbursement wallet from `contracts/disbursement_wallet/` (see [soroban-disbursement-contract.md](../02-contracts/soroban-disbursement-contract.md)). Initialize it with the USDC token address and the super_admin’s public key as authorized signer. Fund the contract with USDC.
 - Set the org’s **soroban_contract_id** (C address) in the `organizations` table.
 - **SOROBAN_RPC_URL** in `.env.local` (e.g. `https://soroban-testnet.stellar.org`).
 - Super_admin has set a **payout wallet** (passphrase or registered key) and can unlock it.

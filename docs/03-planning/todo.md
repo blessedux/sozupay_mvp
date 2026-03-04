@@ -1,12 +1,12 @@
 # SozuPay Dashboard – Task List
 
-**Context:** Phases 1–10 are the **foundation** (dashboard shell, auth, wallet, walls, e-commerce, payouts). They are complete. The **current focus** is **Year 1 NGO disbursement** per [roadmap.md](roadmap.md), with the first NGO partner **MUJERES 2000**. Detailed tasks and order are in [ngo-disbursement-wallet-dev-plan.md](ngo-disbursement-wallet-dev-plan.md) (aligned with [Requerimientos_funcionales_MUJERES_2000.pdf](Requerimientos_funcionales_MUJERES_2000.pdf)).
+**Context:** Phases 1–10 are the **foundation** (dashboard shell, auth, wallet, walls, e-commerce, payouts). They are complete. The **current focus** is **Year 1 NGO disbursement** per [roadmap.md](../00-overview/roadmap.md), with the first NGO partner **MUJERES 2000**. Detailed tasks and order are in [ngo-disbursement-wallet-dev-plan.md](ngo-disbursement-wallet-dev-plan.md) (aligned with [Requerimientos_funcionales_MUJERES_2000.pdf](../05-requirements/Requerimientos_funcionales_MUJERES_2000.pdf)).
 
 ---
 
 ## Phase 1–10: Foundation (complete)
 
-Based on [docs/technical-spec.md](docs/technical-spec.md). Used for merchant/recipient payouts, walls, and e-commerce.
+Based on [technical-spec.md](../00-overview/technical-spec.md). Used for merchant/recipient payouts, walls, and e-commerce.
 
 - [x] **Phase 1:** Next.js app, TypeScript, Stellar/Horizon, README, runbooks, health API
 - [x] **Phase 2:** Magic link / email OTP auth, 2FA, onboarding checklist
@@ -25,7 +25,7 @@ Based on [docs/technical-spec.md](docs/technical-spec.md). Used for merchant/rec
 
 Tracked in detail in **[ngo-disbursement-wallet-dev-plan.md](ngo-disbursement-wallet-dev-plan.md)**. This section is a high-level checklist aligned with that plan and the MUJERES 2000 requirements.
 
-**Insta Awards 30-day sprint:** See **[insta-awards-30day-sprint-plan.md](insta-awards-30day-sprint-plan.md)** for scope: (1) Conversion landing page, (2) Sozu Wallet as SDP provider, (3) NGO Dashboard MVP — persistence + single on-chain payout (Phases A+B).
+**Insta Awards 30-day sprint:** See **[30day-sprint-plan.md](30day-sprint-plan.md)** for scope: (1) Conversion landing page, (2) Sozu Wallet as SDP provider, (3) NGO Dashboard MVP — persistence + single on-chain payout (Phases A+B).
 
 ### Core infrastructure (Months 0–3)
 
@@ -70,7 +70,7 @@ Tracked in detail in **[ngo-disbursement-wallet-dev-plan.md](ngo-disbursement-wa
 
 | Doc | Purpose |
 |-----|--------|
-| [roadmap.md](roadmap.md) | Year 1 / 2 / 4 phasing; dev cycle conventions |
+| [roadmap.md](../00-overview/roadmap.md) | Year 1 / 2 / 4 phasing; dev cycle conventions |
 | [ngo-disbursement-wallet-dev-plan.md](ngo-disbursement-wallet-dev-plan.md) | Full task list, order, MUJERES 2000 mapping, milestones |
 | [production-disbursements-tasks.md](production-disbursements-tasks.md) | Batch disbursement, persistence, execution |
-| [Requerimientos_funcionales_MUJERES_2000.pdf](Requerimientos_funcionales_MUJERES_2000.pdf) | First NGO partner requirements |
+| [Requerimientos_funcionales_MUJERES_2000.pdf](../05-requirements/Requerimientos_funcionales_MUJERES_2000.pdf) | First NGO partner requirements |

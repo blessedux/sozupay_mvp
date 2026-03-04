@@ -29,7 +29,7 @@ Two options:
    - Contract exposes something like `payout(recipient, amount)` and requires a valid signature from an **authorized signer** (super-admin’s public key).  
    - Backend builds an invocation tx; super-admin signs that invocation. Contract checks the signer and performs the transfer.  
    - Result: org’s funds are in the contract; admin’s key is on the tx as the authorizer.  
-   - **Implementation:** [docs/soroban-disbursement-contract.md](soroban-disbursement-contract.md), [docs/e2e-payout-test.md](e2e-payout-test.md) §6 (NGO + Soroban), and payouts route when org has `soroban_contract_id`.
+   - **Implementation:** [soroban-disbursement-contract.md](../02-contracts/soroban-disbursement-contract.md), [e2e-payout-test.md](../04-integrations/e2e-payout-test.md) §6 (NGO + Soroban), and payouts route when org has `soroban_contract_id`.
 
 ## Data model
 

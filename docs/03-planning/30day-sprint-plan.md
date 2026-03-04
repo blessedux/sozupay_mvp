@@ -2,7 +2,7 @@
 
 **Sprint goal:** Deliver a conversion-ready landing page, register **Sozu Wallet** as a Stellar Disbursement Platform (SDP) provider, and ship the NGO Dashboard MVP foundation (persistence + single on-chain payout) within a **$3,900** budget over **30 days**.
 
-**Reference:** [Stellar Disbursement Platform](https://stellar.org/products-and-tools/disbursement-platform) · [Roadmap](./roadmap.md) · [Production Disbursements Tasks](./production-disbursements-tasks.md)
+**Reference:** [Stellar Disbursement Platform](https://stellar.org/products-and-tools/disbursement-platform) · [Roadmap](../00-overview/roadmap.md) · [Production Disbursements Tasks](production-disbursements-tasks.md)
 
 ---
 
@@ -58,7 +58,7 @@
 
 **Budget: $950** · **Owner: Backend + Dashboard**
 
-**Objective:** Replace in-memory state with persistence and execute **single** Stellar USDC payouts from the dashboard (Phases A + B of [production-disbursements-tasks.md](./production-disbursements-tasks.md)). This demonstrates the dashboard as the control plane for disbursements that can later feed SDP and batch flows.
+**Objective:** Replace in-memory state with persistence and execute **single** Stellar USDC payouts from the dashboard (Phases A + B of [production-disbursements-tasks.md](production-disbursements-tasks.md)). This demonstrates the dashboard as the control plane for disbursements that can later feed SDP and batch flows.
 
 **Scope:**
 
@@ -122,7 +122,7 @@ The following are **not** in the 30-day sprint; they are planned for production 
 
 | Item                                          | Description                                                                                                                                                                                |
 | --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Yield router contract**                     | Soroban contract that channels USDC to Defindex (and optionally Blend); per-depositor accounting; withdraw/redeem. Spec: [yield-router-contract-spec.md](./yield-router-contract-spec.md). |
+| **Yield router contract**                     | Soroban contract that channels USDC to Defindex (and optionally Blend); per-depositor accounting; withdraw/redeem. Spec: [yield-router-contract-spec.md](../02-contracts/yield-router-contract-spec.md). |
 | **NGO smart accounts with Defindex baked in** | NGO org wallet as smart account (C) with logic to target Defindex strategy; no need for users to sign each yield allocation.                                                               |
 | **Strategic DeFi planner**                    | Default background logic (keeper or contract) that allocates/rebalances org idle USDC into the yield router by risk and policy; runs without per-action org signing.                       |
 
@@ -132,11 +132,11 @@ The following are **not** in the 30-day sprint; they are planned for production 
 
 | Topic                                                | Document                                                                     |
 | ---------------------------------------------------- | ---------------------------------------------------------------------------- |
-| Year 1 phasing, dev cycles                           | [roadmap.md](./roadmap.md)                                                   |
-| Batch model, Phases A–F detail                       | [production-disbursements-tasks.md](./production-disbursements-tasks.md)     |
-| NGO disbursement, MUJERES 2000                       | [ngo-disbursement-wallet-dev-plan.md](./ngo-disbursement-wallet-dev-plan.md) |
-| Yield router, NGO auto-yield, strategic DeFi planner | [yield-router-contract-spec.md](./yield-router-contract-spec.md)             |
-| Current task list                                    | [todo.md](./todo.md)                                                         |
+| Year 1 phasing, dev cycles                           | [roadmap.md](../00-overview/roadmap.md)                                                   |
+| Batch model, Phases A–F detail                       | [production-disbursements-tasks.md](production-disbursements-tasks.md)     |
+| NGO disbursement, MUJERES 2000                       | [ngo-disbursement-wallet-dev-plan.md](ngo-disbursement-wallet-dev-plan.md) |
+| Yield router, NGO auto-yield, strategic DeFi planner | [yield-router-contract-spec.md](../02-contracts/yield-router-contract-spec.md)             |
+| Current task list                                    | [todo.md](todo.md)                                                         |
 
 ---
 

@@ -6,7 +6,7 @@ Single place to record Soroban contract IDs and token addresses used on **testne
 
 Used by the disbursement wallet and (when implemented) vault/Blend integration.
 
-- **Classic issuer (Horizon):** `GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5` (see [src/lib/stellar/balance.ts](../src/lib/stellar/balance.ts)).
+- **Classic issuer (Horizon):** `GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5` (see [src/lib/stellar/balance.ts](../../src/lib/stellar/balance.ts)).
 - **Soroban token contract (Stellar Asset Contract):** Resolve via Stellar Asset Contract for USDC testnet (issuer above). Use Soroban CLI or [Stellar docs](https://developers.stellar.org/docs/smart-contracts/guides/asset-contract) to get the contract ID.
   - Example CLI: `soroban contract asset deploy --asset "USDC:GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5" --source <key> --network testnet` (if deploying a custom SAC), or use the canonical testnet USDC contract address from Circle/Stellar documentation.
   - **Record here after resolution:** `___________________________`
@@ -21,13 +21,13 @@ One deployment per org (or one shared contract). After deploy, run `initialize(t
 
 ## Smart account factory
 
-Used by [src/lib/stellar/smart-account.ts](../src/lib/stellar/smart-account.ts) when `SMART_ACCOUNT_FACTORY_ID` is set. Creates smart accounts (C) bound to a user signer (G).
+Used by [src/lib/stellar/smart-account.ts](../../src/lib/stellar/smart-account.ts) when `SMART_ACCOUNT_FACTORY_ID` is set. Creates smart accounts (C) bound to a user signer (G).
 
 - **Contract ID:** `___________________________`
 - **Method:** `create_account` (or set `SMART_ACCOUNT_FACTORY_METHOD` in env).
 - **Optional view (deterministic address):** Set `SMART_ACCOUNT_GET_ADDRESS_VIEW` in env if the factory exposes e.g. `get_address(signer)`.
 
-**Factory source:** Prefer third-party (Crossmint/OpenZeppelin); otherwise we add our own in this repo. ABI and env are documented in [smart-accounts.md](./smart-accounts.md#factory-source-and-abi).
+**Factory source:** Prefer third-party (Crossmint/OpenZeppelin); otherwise we add our own in this repo. ABI and env are documented in [smart-accounts.md](../01-architecture/smart-accounts.md#factory-source-and-abi).
 
 ## Blend (external)
 
@@ -53,5 +53,5 @@ Blend is a non-custodial lending protocol on Stellar (Soroban). We use it for au
 
 - **Testnet contract addresses:** USDC pool (or market), supply entrypoint, withdraw entrypoint. Obtain from [Blend documentation](https://docs.blend.capital/) or their GitHub.
 - **Entrypoints:** Typically `deposit` / `supply` and `withdraw` (exact names from Blend ABI). Receipt tokens (e.g. bUSDC) may be returned for supplied balance.
-- **First version:** Backend-only. Backend (with org or super-admin key) calls Blend’s supply/withdraw directly; [src/app/api/vault/route.ts](../src/app/api/vault/route.ts) and the vault dashboard are wired to read balances and (when implemented) trigger supply/withdraw. No SozuPay-deployed vault contract in v1.
+- **First version:** Backend-only. Backend (with org or super-admin key) calls Blend’s supply/withdraw directly; [src/app/api/vault/route.ts](../../src/app/api/vault/route.ts) and the vault dashboard are wired to read balances and (when implemented) trigger supply/withdraw. No SozuPay-deployed vault contract in v1.
 - **Optional later:** A dedicated vault contract that holds org USDC and exposes “deposit into Blend”, “withdraw”, “rebalance” for on-chain transparency and multi-sig.
